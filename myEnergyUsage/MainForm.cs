@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
 using myEnergyUsage.Models;
+using Newtonsoft.Json;
 
 namespace myEnergyUsage
 {
@@ -15,7 +16,10 @@ namespace myEnergyUsage
         private readonly CsvLoader _csvLoader = new CsvLoader();
         private CostCalculator _costCalculator;
         private TariffService _tariffService;
+        private string _tariffFilePath;
+        private TariffStore _tariffStore;
 
+      
         public MainForm()
         {
             InitializeComponent();
@@ -32,7 +36,17 @@ namespace myEnergyUsage
         private void MainForm_Load(object sender, System.EventArgs e)
         {
             Text += " : v" + Assembly.GetExecutingAssembly().GetName().Version; // put in the version number
-        }
+
+            _tariffFilePath = Path.Combine(Application.StartupPath, "tariffs.json");
+
+            _tariffStore = LoadTariffsFromJson(_tariffFilePath);
+
+            _tariffService = new TariffService(_tariffStore.Tariffs);
+
+            _costCalculator = new CostCalculator(_tariffService);
+
+            LoadTariffList();
+            }
 
         private void btn_close_Click(object sender, System.EventArgs e)
         {
@@ -310,5 +324,190 @@ namespace myEnergyUsage
             }
         }
 
+        /////
+        /// Tarriff info which is stored in JSON file
+
+        public TariffStore LoadTariffsFromJson(string filePath)
+        {
+            if (!File.Exists(filePath))
+            {
+                // No file yet → return empty store
+                return new TariffStore();
+            }
+
+            try
+            {
+                string json = File.ReadAllText(filePath);
+                TariffStore store = JsonConvert.DeserializeObject<TariffStore>(json);
+
+                if (store == null)
+                    return new TariffStore();
+
+                return store;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error loading tariff file:\n" + ex.Message,
+                    "Tariff Load Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+                return new TariffStore();
+            }
+        }
+
+        public void SaveTariffsToJson(string filePath, TariffStore store)
+        {
+            try
+            {
+                string json = JsonConvert.SerializeObject(store, Formatting.Indented);
+                File.WriteAllText(filePath, json);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error saving tariff file:\n" + ex.Message,
+                    "Tariff Save Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+
+        private void LoadTariffList()
+        {
+            lstTariffs.Items.Clear();
+
+            foreach (var t in _tariffStore.Tariffs)
+            {
+                lstTariffs.Items.Add(t.Name);
+            }
+        }
+
+        private void lstTariffs_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (lstTariffs.SelectedItem == null)
+                return;
+
+            string name = lstTariffs.SelectedItem.ToString();
+
+            Tariff selected = _tariffStore.Tariffs
+                .FirstOrDefault(t => t.Name == name);
+
+            if (selected == null)
+                return;
+
+            txtName.Text = selected.Name;
+            cmbEnergyType.SelectedIndex = selected.Type == EnergyType.Electricity ? 0 : 1;
+            dtpFrom.Value = selected.EffectiveFrom;
+            dtpTo.Value = selected.EffectiveTo;
+
+            txtPeakRate.Text = selected.DayRatePencePerKWh.ToString();
+            txtOffPeakRate.Text = selected.NightRatePencePerKWh.ToString();
+            txtFlatRate.Text = selected.FlatRatePencePerKWh.ToString();
+            txtStandingCharge.Text = selected.StandingChargePencePerDay.ToString();
+            txtNrab.Text = selected.NrabPencePerKWh.ToString();
+        }
+
+        private void btnAddNew_Click(object sender, EventArgs e)
+        {
+            lstTariffs.ClearSelected();
+
+            txtName.Text = "";
+            cmbEnergyType.SelectedIndex = -1;
+            dtpFrom.Value = DateTime.Now;
+            dtpTo.Value = DateTime.Now;
+
+            txtPeakRate.Text = "0";
+            txtOffPeakRate.Text = "0";
+            txtFlatRate.Text = "0";
+            txtStandingCharge.Text = "0";
+            txtNrab.Text = "0";
+        }
+
+        private void btnSave_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                // Validate name
+                if (string.IsNullOrWhiteSpace(txtName.Text))
+                {
+                    MessageBox.Show("Tariff must have a name.", "Validation Error",
+                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                // Determine energy type
+                EnergyType type = cmbEnergyType.SelectedIndex == 0
+                    ? EnergyType.Electricity
+                    : EnergyType.Gas;
+
+                // Try to find existing tariff
+                Tariff existing = _tariffStore.Tariffs
+                    .FirstOrDefault(t => t.Name == txtName.Text);
+
+                if (existing == null)
+                {
+                    existing = new Tariff();
+                    _tariffStore.Tariffs.Add(existing);
+                }
+
+                // Update fields
+                existing.Name = txtName.Text;
+                existing.Type = type;
+                existing.EffectiveFrom = dtpFrom.Value;
+                existing.EffectiveTo = dtpTo.Value;
+
+                double temp;
+
+                double.TryParse(txtPeakRate.Text, out temp);
+                existing.DayRatePencePerKWh = temp;
+
+                double.TryParse(txtOffPeakRate.Text, out temp);
+                existing.NightRatePencePerKWh = temp;
+
+                double.TryParse(txtFlatRate.Text, out temp);
+                existing.FlatRatePencePerKWh = temp;
+
+                double.TryParse(txtStandingCharge.Text, out temp);
+                existing.StandingChargePencePerDay = temp;
+
+                double.TryParse(txtNrab.Text, out temp);
+                existing.NrabPencePerKWh = temp;
+
+                // Save JSON
+                SaveTariffsToJson(_tariffFilePath, _tariffStore);
+
+                // Refresh list
+                LoadTariffList();
+
+                MessageBox.Show("Tariff saved successfully.", "Saved",
+                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error saving tariff:\n" + ex.Message, "Error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void btnDelete_Click(object sender, EventArgs e)
+        {
+            if (lstTariffs.SelectedItem == null)
+                return;
+
+            string name = lstTariffs.SelectedItem.ToString();
+
+            Tariff t = _tariffStore.Tariffs.FirstOrDefault(x => x.Name == name);
+
+            if (t == null)
+                return;
+
+            _tariffStore.Tariffs.Remove(t);
+
+            SaveTariffsToJson(_tariffFilePath, _tariffStore);
+
+            LoadTariffList();
+
+            MessageBox.Show("Tariff deleted.", "Deleted",
+                MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
     }
+
 }
