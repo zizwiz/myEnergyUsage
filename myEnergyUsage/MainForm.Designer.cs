@@ -76,6 +76,11 @@ namespace myEnergyUsage
             this.label12 = new System.Windows.Forms.Label();
             this.label13 = new System.Windows.Forms.Label();
             this.label14 = new System.Windows.Forms.Label();
+            this.clbDays = new System.Windows.Forms.CheckedListBox();
+            this.dtpStartTime = new System.Windows.Forms.DateTimePicker();
+            this.label15 = new System.Windows.Forms.Label();
+            this.label16 = new System.Windows.Forms.Label();
+            this.dtpEndTime = new System.Windows.Forms.DateTimePicker();
             ((System.ComponentModel.ISupportInitialize)(this.chartUsage)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.tabControl1.SuspendLayout();
@@ -136,6 +141,7 @@ namespace myEnergyUsage
             this.cmbMonth.Name = "cmbMonth";
             this.cmbMonth.Size = new System.Drawing.Size(160, 28);
             this.cmbMonth.TabIndex = 4;
+            this.cmbMonth.SelectedIndexChanged += new System.EventHandler(this.cmbMonth_SelectedIndexChanged);
             // 
             // btnSelectRoot
             // 
@@ -212,6 +218,11 @@ namespace myEnergyUsage
             // 
             // tab_charts
             // 
+            this.tab_charts.Controls.Add(this.dtpEndTime);
+            this.tab_charts.Controls.Add(this.label16);
+            this.tab_charts.Controls.Add(this.label15);
+            this.tab_charts.Controls.Add(this.dtpStartTime);
+            this.tab_charts.Controls.Add(this.clbDays);
             this.tab_charts.Controls.Add(this.chartUsage);
             this.tab_charts.Controls.Add(this.btn_close);
             this.tab_charts.Controls.Add(this.btnSelectRoot);
@@ -499,6 +510,50 @@ namespace myEnergyUsage
             this.label14.TabIndex = 26;
             this.label14.Text = "p/kWh";
             // 
+            // clbDays
+            // 
+            this.clbDays.FormattingEnabled = true;
+            this.clbDays.Location = new System.Drawing.Point(22, 381);
+            this.clbDays.Name = "clbDays";
+            this.clbDays.Size = new System.Drawing.Size(244, 165);
+            this.clbDays.TabIndex = 11;
+            // 
+            // dtpStartTime
+            // 
+            this.dtpStartTime.Format = System.Windows.Forms.DateTimePickerFormat.Time;
+            this.dtpStartTime.Location = new System.Drawing.Point(113, 575);
+            this.dtpStartTime.Name = "dtpStartTime";
+            this.dtpStartTime.ShowUpDown = true;
+            this.dtpStartTime.Size = new System.Drawing.Size(107, 26);
+            this.dtpStartTime.TabIndex = 12;
+            // 
+            // label15
+            // 
+            this.label15.AutoSize = true;
+            this.label15.Location = new System.Drawing.Point(28, 580);
+            this.label15.Name = "label15";
+            this.label15.Size = new System.Drawing.Size(79, 20);
+            this.label15.TabIndex = 13;
+            this.label15.Text = "Time from";
+            // 
+            // label16
+            // 
+            this.label16.AutoSize = true;
+            this.label16.Location = new System.Drawing.Point(226, 580);
+            this.label16.Name = "label16";
+            this.label16.Size = new System.Drawing.Size(23, 20);
+            this.label16.TabIndex = 14;
+            this.label16.Text = "to";
+            // 
+            // dtpEndTime
+            // 
+            this.dtpEndTime.Format = System.Windows.Forms.DateTimePickerFormat.Time;
+            this.dtpEndTime.Location = new System.Drawing.Point(255, 575);
+            this.dtpEndTime.Name = "dtpEndTime";
+            this.dtpEndTime.ShowUpDown = true;
+            this.dtpEndTime.Size = new System.Drawing.Size(107, 26);
+            this.dtpEndTime.TabIndex = 15;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
@@ -565,6 +620,11 @@ namespace myEnergyUsage
         private System.Windows.Forms.Button btnDelete;
         private System.Windows.Forms.Button btnSave;
         private System.Windows.Forms.Button btnAddNew;
+        private System.Windows.Forms.DateTimePicker dtpEndTime;
+        private System.Windows.Forms.Label label16;
+        private System.Windows.Forms.Label label15;
+        private System.Windows.Forms.DateTimePicker dtpStartTime;
+        private System.Windows.Forms.CheckedListBox clbDays;
     }
 }
 

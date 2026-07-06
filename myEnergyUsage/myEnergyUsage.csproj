@@ -64,6 +64,8 @@
     <Compile Include="Services\CostCalculator.cs" />
     <Compile Include="Services\CsvLoader.cs" />
     <Compile Include="Services\TariffService.cs" />
+    <Compile Include="utils\MsgBox.cs" />
+    <Compile Include="utils\Win32.cs" />
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -97,5 +99,6 @@
       <Version>13.0.4</Version>
     </PackageReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -12,14 +12,16 @@ namespace myEnergyUsage
 {
     public partial class MainForm : Form
     {
-        private string _rootFolder;
-        private readonly CsvLoader _csvLoader = new CsvLoader();
-        private CostCalculator _costCalculator;
-        private TariffService _tariffService;
-        private string _tariffFilePath;
+        private List<EnergyReading> allReadings;   
+        private CsvLoader _csvLoader = new CsvLoader();
         private TariffStore _tariffStore;
+        private TariffService _tariffService;
+        private CostCalculator _costCalculator;
 
-      
+        private string _rootFolder;
+        private string _tariffFilePath;
+
+     
         public MainForm()
         {
             InitializeComponent();
@@ -37,16 +39,12 @@ namespace myEnergyUsage
         {
             Text += " : v" + Assembly.GetExecutingAssembly().GetName().Version; // put in the version number
 
-            _tariffFilePath = Path.Combine(Application.StartupPath, "tariffs.json");
-
+            _tariffFilePath = Path.Combine(Application.StartupPath, "tariffs.json"); //Get list from same location as exe
             _tariffStore = LoadTariffsFromJson(_tariffFilePath);
-
             _tariffService = new TariffService(_tariffStore.Tariffs);
-
             _costCalculator = new CostCalculator(_tariffService);
-
             LoadTariffList();
-            }
+        }
 
         private void btn_close_Click(object sender, System.EventArgs e)
         {
@@ -179,7 +177,7 @@ namespace myEnergyUsage
                     costPence = c;
 
                 // Show tooltip: kWh and cost
-                string tooltip = $"Usage: {kwh:F3} kWh\nCost: {costPence / 100.0:F2} £";
+                string tooltip = $"Usage: {kwh:F3} kWh\nCost: £{costPence / 100.0:F2}";
 
                 toolTip1.SetToolTip(chartUsage, tooltip);
             }
@@ -202,119 +200,92 @@ namespace myEnergyUsage
             }
         }
 
+         
         private void btnShowChart_Click(object sender, EventArgs e)
         {
-            if (cmbYear.SelectedItem == null || cmbMonth.SelectedItem == null)
-            {
-                MessageBox.Show("Please select a year and month.", "Missing selection",
-                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
-
             try
             {
-                // Validate selections
-                if (cmbYear.SelectedItem == null || cmbMonth.SelectedItem == null)
+                // Ensure we have loaded readings already
+                if (allReadings == null || allReadings.Count == 0)
                 {
-                    MessageBox.Show("Please select both a year and a month.", "Missing selection",
+                    MessageBox.Show("No readings loaded. Please select a year and month first.",
+                        "No Data", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                // 1. Get selected days
+                List<DateTime> selectedDays = new List<DateTime>();
+
+                foreach (var item in clbDays.CheckedItems)
+                {
+                    DateTime d;
+                    if (DateTime.TryParse(item.ToString(), out d))
+                        selectedDays.Add(d);
+                }
+
+                if (selectedDays.Count == 0)
+                {
+                    MessageBox.Show("Please select at least one day.", "No Days Selected",
                         MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
 
-                // Determine selected folders
-                string year = cmbYear.SelectedItem.ToString();
-                string month = cmbMonth.SelectedItem.ToString();
+                // 2. Get selected time range
+                TimeSpan startTime = dtpStartTime.Value.TimeOfDay;
+                TimeSpan endTime = dtpEndTime.Value.TimeOfDay;
 
-                string monthFolder = Path.Combine(_rootFolder, year, month);
-
-                if (!Directory.Exists(monthFolder))
+                if (endTime <= startTime)
                 {
-                    MessageBox.Show("The selected month folder does not exist.", "Error",
-                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("End time must be after start time.", "Invalid Time Range",
+                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
 
-                // Determine whether user wants HalfHour or Daily
-                bool isHalfHour = rdoHalfHour.Checked;   // your radio button
-                bool isDaily = rdoDaily.Checked;
+                // 3. Filter readings
+                var filteredReadings = FilterReadings(allReadings, selectedDays, startTime, endTime);
 
-                string dataFolder = isHalfHour
-                    ? Path.Combine(monthFolder, "HalfHour")
-                    : Path.Combine(monthFolder, "Daily");
-
-                if (!Directory.Exists(dataFolder))
+                if (filteredReadings.Count == 0)
                 {
-                    MessageBox.Show("The selected data type folder does not exist.", "Error",
-                        MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return;
-                }
-
-                // Load all CSV files in the folder
-                var csvFiles = Directory.GetFiles(dataFolder, "*.csv");
-
-                if (csvFiles.Length == 0)
-                {
-                    MessageBox.Show("No CSV files found in this folder.", "No Data",
+                    MessageBox.Show("No readings match the selected filters.", "No Data",
                         MessageBoxButtons.OK, MessageBoxIcon.Information);
                     return;
                 }
 
-                // Prepare list for all readings
-                List<EnergyReading> allReadings = new List<EnergyReading>();
-
-                foreach (var file in csvFiles)
-                {
-                    // Determine energy type from filename (HouseE.csv → Electricity)
-                    EnergyType type = file.EndsWith("E.csv", StringComparison.OrdinalIgnoreCase)
-                        ? EnergyType.Electricity
-                        : EnergyType.Gas;
-
-                    // Load readings from this file
-                    var readings = _csvLoader.LoadCsvFile(file, type);
-
-                    // Add to master list
-                    allReadings.AddRange(readings);
-                }
-
-                if (allReadings.Count == 0)
-                {
-                    MessageBox.Show("CSV files were found, but no valid readings were loaded.", "No Data",
-                        MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    return;
-                }
-
-                // Clear chart before drawing new data
+                // 4. Clear chart
                 chartUsage.Series.Clear();
 
-                // Example: show all readings for the month as one series
-                // You can later replace this with filtering (e.g., Sundays only, specific days, etc.)
-                var series = new Series("Usage")
+                // 5. Create one series per selected day
+                foreach (var day in selectedDays)
                 {
-                    ChartType = SeriesChartType.Column,
-                    XValueType = ChartValueType.DateTime,
-                    YValueType = ChartValueType.Double
-                };
+                    string seriesName = day.ToString("yyyy-MM-dd");
 
-                foreach (var r in allReadings.OrderBy(x => x.DateTimeUtc))
-                {
-                    int idx = series.Points.AddXY(r.DateTimeUtc, r.KWh);
+                    var dayReadings = filteredReadings
+                        .Where(r => r.DateTimeUtc.Date == day)
+                        .OrderBy(r => r.DateTimeUtc)
+                        .ToList();
 
-                    // Store cost in Tag for tooltip
-                    double costPence = _costCalculator.CalculateCostForReading(r);
-                    series.Points[idx].Tag = costPence;
+                    var series = new Series(seriesName)
+                    {
+                        ChartType = SeriesChartType.Column,
+                        XValueType = ChartValueType.DateTime,
+                        YValueType = ChartValueType.Double
+                    };
+
+                    foreach (var r in dayReadings)
+                    {
+                        int idx = series.Points.AddXY(r.DateTimeUtc, r.KWh);
+
+                        double costPence = _costCalculator.CalculateCostForReading(r);
+                        series.Points[idx].Tag = costPence;
+                    }
+
+                    chartUsage.Series.Add(series);
                 }
 
-                chartUsage.Series.Add(series);
+                // 6. Calculate total cost for filtered period
+                var costResult = _costCalculator.CalculateCostForPeriod(filteredReadings);
 
-                // Calculate total cost for the displayed period
-                var costResult = _costCalculator.CalculateCostForPeriod(allReadings);
-
-                double totalCostPounds = costResult.TotalCostPence / 100.0;
-
-                // Show cost to user
-                lblCost.Text = "Total Cost: £" + totalCostPounds.ToString("F2");
-
-                // Optional: show total kWh
+                lblCost.Text = "Total Cost: £" + (costResult.TotalCostPence / 100.0).ToString("F2");
                 lblkWh.Text = "Total kWh: " + costResult.TotalKWh.ToString("F3");
             }
             catch (Exception ex)
@@ -323,6 +294,7 @@ namespace myEnergyUsage
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
+
 
         /////
         /// Tarriff info which is stored in JSON file
@@ -506,6 +478,76 @@ namespace myEnergyUsage
 
             MessageBox.Show("Tariff deleted.", "Deleted",
                 MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
+        //////////////////////
+        /// CSV filtering functions
+        ///
+        private void PopulateDayList(List<EnergyReading> readings)
+        {
+            clbDays.Items.Clear();
+
+            var days = readings
+                .Select(r => r.DateTimeUtc.Date)
+                .Distinct()
+                .OrderBy(d => d);
+
+            foreach (var d in days)
+            {
+                clbDays.Items.Add(d.ToString("yyyy-MM-dd"));
+            }
+        }
+
+        private List<EnergyReading> FilterReadings(
+            List<EnergyReading> allReadings,
+            List<DateTime> selectedDays,
+            TimeSpan startTime,
+            TimeSpan endTime)
+        {
+            var filtered = allReadings
+                .Where(r => selectedDays.Contains(r.DateTimeUtc.Date))
+                .Where(r =>
+                {
+                    var t = r.DateTimeUtc.TimeOfDay;
+                    return t >= startTime && t <= endTime;
+                })
+                .OrderBy(r => r.DateTimeUtc)
+                .ToList();
+
+            return filtered;
+        }
+
+        private void LoadMonthReadings()
+        {
+            allReadings = new List<EnergyReading>();
+
+            string year = cmbYear.SelectedItem.ToString();
+            string month = cmbMonth.SelectedItem.ToString();
+
+            string monthFolder = Path.Combine(_rootFolder, year, month);
+            string halfHourFolder = Path.Combine(monthFolder, "HalfHour");
+
+            if (!Directory.Exists(halfHourFolder))
+            {
+                clbDays.Items.Clear();
+                return;
+            }
+
+            var csvFiles = Directory.GetFiles(halfHourFolder, "*.csv");
+
+            foreach (var file in csvFiles)
+            {
+                EnergyType type = file.EndsWith("E.csv") ? EnergyType.Electricity : EnergyType.Gas;
+                var readings = _csvLoader.LoadCsvFile(file, type);
+                allReadings.AddRange(readings);
+            }
+
+            PopulateDayList(allReadings);
+        }
+
+        private void cmbMonth_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            LoadMonthReadings();
         }
 
     }
