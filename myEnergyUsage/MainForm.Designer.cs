@@ -29,13 +29,35 @@ namespace myEnergyUsage
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
+            this.btn_close = new System.Windows.Forms.Button();
+            this.SuspendLayout();
+            // 
+            // btn_close
+            // 
+            this.btn_close.Location = new System.Drawing.Point(1269, 605);
+            this.btn_close.Name = "btn_close";
+            this.btn_close.Size = new System.Drawing.Size(104, 45);
+            this.btn_close.TabIndex = 0;
+            this.btn_close.Text = "Close";
+            this.btn_close.UseVisualStyleBackColor = true;
+            this.btn_close.Click += new System.EventHandler(this.btn_close_Click);
+            // 
+            // MainForm
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
-            this.Text = "MainForm";
+            this.ClientSize = new System.Drawing.Size(1424, 690);
+            this.Controls.Add(this.btn_close);
+            this.Name = "MainForm";
+            this.Text = "myEnergyUsage";
+            this.Load += new System.EventHandler(this.MainForm_Load);
+            this.ResumeLayout(false);
+
         }
 
         #endregion
+
+        private System.Windows.Forms.Button btn_close;
     }
 }
 
