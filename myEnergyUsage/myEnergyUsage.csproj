@@ -65,6 +65,7 @@
     <Compile Include="Services\CsvLoader.cs" />
     <Compile Include="Services\TariffService.cs" />
     <Compile Include="utils\MsgBox.cs" />
+    <Compile Include="utils\Sunriset.cs" />
     <Compile Include="utils\Win32.cs" />
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>

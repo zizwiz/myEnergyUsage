@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -200,12 +201,11 @@ namespace myEnergyUsage
             }
         }
 
-         
+
         private void btnShowChart_Click(object sender, EventArgs e)
         {
             try
             {
-                // Ensure we have loaded readings already
                 if (allReadings == null || allReadings.Count == 0)
                 {
                     MessageBox.Show("No readings loaded. Please select a year and month first.",
@@ -213,80 +213,128 @@ namespace myEnergyUsage
                     return;
                 }
 
-                // 1. Get selected days
-                List<DateTime> selectedDays = new List<DateTime>();
-
-                foreach (var item in clbDays.CheckedItems)
-                {
-                    DateTime d;
-                    if (DateTime.TryParse(item.ToString(), out d))
-                        selectedDays.Add(d);
-                }
-
-                if (selectedDays.Count == 0)
-                {
-                    MessageBox.Show("Please select at least one day.", "No Days Selected",
-                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    return;
-                }
-
-                // 2. Get selected time range
-                TimeSpan startTime = dtpStartTime.Value.TimeOfDay;
-                TimeSpan endTime = dtpEndTime.Value.TimeOfDay;
-
-                if (endTime <= startTime)
-                {
-                    MessageBox.Show("End time must be after start time.", "Invalid Time Range",
-                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    return;
-                }
-
-                // 3. Filter readings
-                var filteredReadings = FilterReadings(allReadings, selectedDays, startTime, endTime);
-
-                if (filteredReadings.Count == 0)
-                {
-                    MessageBox.Show("No readings match the selected filters.", "No Data",
-                        MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    return;
-                }
-
-                // 4. Clear chart
                 chartUsage.Series.Clear();
 
-                // 5. Create one series per selected day
-                foreach (var day in selectedDays)
+                // ---------------------------------------------------------
+                // DAILY MODE (NO FILTERING)
+                // ---------------------------------------------------------
+                if (rdoDaily.Checked)
                 {
-                    string seriesName = day.ToString("yyyy-MM-dd");
-
-                    var dayReadings = filteredReadings
-                        .Where(r => r.DateTimeUtc.Date == day)
-                        .OrderBy(r => r.DateTimeUtc)
-                        .ToList();
-
-                    var series = new Series(seriesName)
+                    // One series for the whole month
+                    var series = new Series("Daily Usage")
                     {
                         ChartType = SeriesChartType.Column,
                         XValueType = ChartValueType.DateTime,
                         YValueType = ChartValueType.Double
                     };
 
-                    foreach (var r in dayReadings)
+                    foreach (var r in allReadings.OrderBy(x => x.DateTimeUtc))
                     {
-                        int idx = series.Points.AddXY(r.DateTimeUtc, r.KWh);
+                        int idx = series.Points.AddXY(r.DateTimeUtc.Date, r.KWh);
 
                         double costPence = _costCalculator.CalculateCostForReading(r);
                         series.Points[idx].Tag = costPence;
                     }
 
                     chartUsage.Series.Add(series);
+
+                    // Cost for whole month
+                    var costResult = _costCalculator.CalculateCostForPeriod(allReadings);
+
+                    lblCost.Text = "Total Cost: £" + (costResult.TotalCostPence / 100.0).ToString("F2");
+                    lblkWh.Text = "Total kWh: " + costResult.TotalKWh.ToString("F3");
+
+                    return; // Finished daily mode
                 }
 
-                // 6. Calculate total cost for filtered period
-                var costResult = _costCalculator.CalculateCostForPeriod(filteredReadings);
+                // ---------------------------------------------------------
+                // HALF-HOUR MODE (FILTERING)
+                // ---------------------------------------------------------
+                chartUsage.ChartAreas[0].AxisX.StripLines.Clear();
 
-                lblCost.Text = "Total Cost: £" + (costResult.TotalCostPence / 100.0).ToString("F2");
-                lblkWh.Text = "Total kWh: " + costResult.TotalKWh.ToString("F3");
+                if (rdoHalfHour.Checked)
+                {
+                    // 1. Get selected days
+                    List<DateTime> selectedDays = new List<DateTime>();
+
+                    foreach (var item in clbDays.CheckedItems)
+                    {
+                        DateTime d;
+                        if (DateTime.TryParse(item.ToString(), out d))
+                            selectedDays.Add(d);
+                    }
+
+                    if (selectedDays.Count == 0)
+                    {
+                        MessageBox.Show("Please select at least one day.", "No Days Selected",
+                            MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        return;
+                    }
+
+                    // 2. Get selected time range
+                    TimeSpan startTime = dtpStartTime.Value.TimeOfDay;
+                    TimeSpan endTime = dtpEndTime.Value.TimeOfDay;
+
+                    if (endTime <= startTime)
+                    {
+                        MessageBox.Show("End time must be after start time.", "Invalid Time Range",
+                            MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        return;
+                    }
+
+                    // 3. Filter readings
+                    var filteredReadings = FilterReadings(allReadings, selectedDays, startTime, endTime);
+
+                    if (filteredReadings.Count == 0)
+                    {
+                        MessageBox.Show("No readings match the selected filters.", "No Data",
+                            MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        return;
+                    }
+
+                    // 4. Create one series per selected day
+                    foreach (var day in selectedDays)
+                    {
+                        string seriesName = day.ToString("yyyy-MM-dd");
+
+                        var dayReadings = filteredReadings
+                            .Where(r => r.DateTimeUtc.Date == day)
+                            .OrderBy(r => r.DateTimeUtc)
+                            .ToList();
+
+                        var series = new Series(seriesName)
+                        {
+                            ChartType = SeriesChartType.Column,
+                            XValueType = ChartValueType.DateTime,
+                            YValueType = ChartValueType.Double
+                        };
+
+                        foreach (var r in dayReadings)
+                        {
+                            int idx = series.Points.AddXY(r.DateTimeUtc, r.KWh);
+
+                            double costPence = _costCalculator.CalculateCostForReading(r);
+                            series.Points[idx].Tag = costPence;
+                        }
+
+                        chartUsage.Series.Add(series);
+
+                        // ---------------------------------------------------------
+                        // ADD PEAK PERIOD SHADING (WEEKDAYS ONLY)
+                        // ---------------------------------------------------------
+                        if (day.DayOfWeek != DayOfWeek.Saturday &&
+                            day.DayOfWeek != DayOfWeek.Sunday)
+                        {
+                            AddPeakShading(day);
+                        }
+                    }
+
+                    // 5. Cost for filtered period
+                    var costResult = _costCalculator.CalculateCostForPeriod(filteredReadings);
+
+                    lblCost.Text = "Total Cost: £" + (costResult.TotalCostPence / 100.0).ToString("F2");
+                    lblkWh.Text = "Total kWh: " + costResult.TotalKWh.ToString("F3");
+                }
             }
             catch (Exception ex)
             {
@@ -296,8 +344,9 @@ namespace myEnergyUsage
         }
 
 
+
         /////
-        /// Tarriff info which is stored in JSON file
+        /// Tariff info which is stored in JSON file
 
         public TariffStore LoadTariffsFromJson(string filePath)
         {
@@ -494,7 +543,8 @@ namespace myEnergyUsage
 
             foreach (var d in days)
             {
-                clbDays.Items.Add(d.ToString("yyyy-MM-dd"));
+               // show the date as dayname : day of month Month name Year.
+                clbDays.Items.Add(d.ToString("dddd : dd MMM yyyy"));
             }
         }
 
@@ -548,6 +598,22 @@ namespace myEnergyUsage
         private void cmbMonth_SelectedIndexChanged(object sender, EventArgs e)
         {
             LoadMonthReadings();
+        }
+
+        // Add shading only on half hourly charts to show the peak and off peak times.
+        private void AddPeakShading(DateTime day)
+        {
+            // Peak period: 07:00 → 19:00
+            DateTime start = day.Date.AddHours(7);
+            DateTime end = day.Date.AddHours(19);
+
+            StripLine strip = new StripLine();
+            strip.BackColor = Color.FromArgb(40, Color.Gray); // light grey transparent
+            strip.IntervalOffset = start.ToOADate();
+            strip.StripWidth = end.ToOADate() - start.ToOADate();
+
+            // Add to chart area
+            chartUsage.ChartAreas[0].AxisX.StripLines.Add(strip);
         }
 
     }
