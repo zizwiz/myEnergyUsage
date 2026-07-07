@@ -13,7 +13,7 @@ namespace myEnergyUsage
 {
     public partial class MainForm : Form
     {
-        private List<EnergyReading> allReadings;   
+        private List<EnergyReading> allReadings;
         private CsvLoader _csvLoader = new CsvLoader();
         private TariffStore _tariffStore;
         private TariffService _tariffService;
@@ -22,7 +22,7 @@ namespace myEnergyUsage
         private string _rootFolder;
         private string _tariffFilePath;
 
-     
+      
         public MainForm()
         {
             InitializeComponent();
@@ -213,7 +213,7 @@ namespace myEnergyUsage
 
             try
             {
-            
+
                 if (allReadings == null || allReadings.Count == 0)
                 {
                     MessageBox.Show("No readings loaded. Please select a year and month first.",
@@ -221,14 +221,19 @@ namespace myEnergyUsage
                     return;
                 }
 
+                // Clear everything first
                 chartUsage.Series.Clear();
-              
+                chartUsage.ChartAreas[0].AxisX.StripLines.Clear();
+
 
                 // ---------------------------------------------------------
                 // DAILY MODE (NO FILTERING)
                 // ---------------------------------------------------------
                 if (rdoDaily.Checked)
                 {
+                    // Clear everything first
+                    chartUsage.Series.Clear();
+
                     // One series for the whole month
                     var series = new Series("Daily Usage")
                     {
@@ -259,10 +264,13 @@ namespace myEnergyUsage
                 // ---------------------------------------------------------
                 // HALF-HOUR MODE (FILTERING)
                 // ---------------------------------------------------------
-                chartUsage.ChartAreas[0].AxisX.StripLines.Clear();
 
                 if (rdoHalfHour.Checked)
                 {
+                    //// Clear everything first
+                    chartUsage.Series.Clear();
+                    chartUsage.ChartAreas[0].AxisX.StripLines.Clear();
+
                     // 1. Get selected days
                     List<DateTime> selectedDays = new List<DateTime>();
 
@@ -328,42 +336,51 @@ namespace myEnergyUsage
 
                         chartUsage.Series.Add(series);
 
-                        // ---------------------------------------------------------
-                        // ADD SUNRISE / SUNSET LINES
-                        // ---------------------------------------------------------
-                        sunrise = GetSunEventLocal(day, true);
-                        sunset = GetSunEventLocal(day, false);
+                        foreach (var shading_day in selectedDays)
+                        {
 
-                        if (sunrise.HasValue)
+                            // ---------------------------------------------------------
+                            // SUNRISE / SUNSET
+                            // ---------------------------------------------------------
+                            sunrise = GetSunEventLocal(shading_day, true);
+                            sunset = GetSunEventLocal(shading_day, false);
+
+                            if (!sunrise.HasValue || !sunset.HasValue)
+                                continue;
+
+                            // Vertical markers
                             AddVerticalLine(sunrise.Value, Color.Red);
-
-                        if (sunset.HasValue)
                             AddVerticalLine(sunset.Value, Color.Orange);
 
-                        // ---------------------------------------------------------
-                        // ADD PEAK PERIOD SHADING (WEEKDAYS ONLY)
-                        // ---------------------------------------------------------
-                        if (day.DayOfWeek != DayOfWeek.Saturday &&
-                            day.DayOfWeek != DayOfWeek.Sunday)
-                        {
-                            AddPeakShading(day);
+                            // ---------------------------------------------------------
+                            // NIGHT BEFORE SUNRISE (00:00 → sunrise)
+                            // ---------------------------------------------------------
+                            AddNightBeforeSunrise(shading_day, sunrise.Value);
+
+                            // ---------------------------------------------------------
+                            // DAYLIGHT SHADING (sunrise → sunset)
+                            // ---------------------------------------------------------
+                            AddDaylightShading(sunrise.Value, sunset.Value);
+
+                            // ---------------------------------------------------------
+                            // NIGHT AFTER SUNSET (sunset → next sunrise)
+                            // ---------------------------------------------------------
+                            DateTime nextDay = shading_day.AddDays(1);
+                            DateTime? nextSunrise = GetSunEventLocal(nextDay, true);
+
+                            if (nextSunrise.HasValue)
+                                AddNightShading(sunset.Value, nextSunrise.Value);
+
+                            // ---------------------------------------------------------
+                            // PEAK SHADING (weekdays only)
+                            // ---------------------------------------------------------
+                            if (shading_day.DayOfWeek != DayOfWeek.Saturday &&
+                                shading_day.DayOfWeek != DayOfWeek.Sunday)
+                            {
+                                AddPeakShading(shading_day);
+                            }
+
                         }
-
-                        if (day.DayOfWeek != DayOfWeek.Saturday &&
-                            day.DayOfWeek != DayOfWeek.Sunday)
-                        {
-                            AddPeakShading(day);
-                        }
-
-                        // Add sunrise/sunset markers
-                        sunrise = GetSunEventLocal(day, true);
-                        sunset = GetSunEventLocal(day, false);
-
-                        if (sunrise.HasValue)
-                            AddVerticalLine(sunrise.Value, Color.Red);
-
-                        if (sunset.HasValue)
-                            AddVerticalLine(sunset.Value, Color.Orange);
 
                     }
 
@@ -643,18 +660,18 @@ namespace myEnergyUsage
         // Add shading only on half hourly charts to show the peak and off peak times.
         private void AddPeakShading(DateTime day)
         {
-            // Peak period: 07:00 → 19:00
             DateTime start = day.Date.AddHours(7);
             DateTime end = day.Date.AddHours(19);
 
             StripLine strip = new StripLine();
-            strip.BackColor = Color.FromArgb(40, Color.Gray); // light grey transparent
+            strip.BackColor = Color.FromArgb(40, Color.Gray); // light grey
+                                                              // strip.BackColor = Color.FromArgb(40, Color.DarkGray); // dark grey
             strip.IntervalOffset = start.ToOADate();
             strip.StripWidth = end.ToOADate() - start.ToOADate();
 
-            // Add to chart area
             chartUsage.ChartAreas[0].AxisX.StripLines.Add(strip);
         }
+
 
         /////////////////
         /// Sunrise Sunset items
@@ -668,9 +685,8 @@ namespace myEnergyUsage
             double utcHours = sr.CalculateSunTime(day, latitude, longitude, isSunrise);
 
             if (double.IsNaN(utcHours))
-                return null; // No sunrise/sunset (rare in UK but safe)
+                return null;
 
-            // Convert decimal hours to UTC DateTime
             int hour = (int)Math.Floor(utcHours);
             int minute = (int)Math.Floor((utcHours - hour) * 60);
             int second = (int)Math.Floor(((utcHours - hour) * 60 - minute) * 60);
@@ -680,7 +696,6 @@ namespace myEnergyUsage
                 hour, minute, second,
                 DateTimeKind.Utc);
 
-            // Convert to UK local time (handles BST automatically)
             DateTime localTime = TimeZoneInfo.ConvertTimeFromUtc(
                 utcTime,
                 TimeZoneInfo.FindSystemTimeZoneById("GMT Standard Time"));
@@ -696,11 +711,45 @@ namespace myEnergyUsage
             line.BorderWidth = 2;
             line.BorderDashStyle = ChartDashStyle.Solid;
 
-            // Position line at the exact time
             line.IntervalOffset = time.ToOADate();
-            line.StripWidth = 0.0001; // Very thin vertical line
+            line.StripWidth = 0.0001;
 
             chartUsage.ChartAreas[0].AxisX.StripLines.Add(line);
+        }
+
+        private void AddDaylightShading(DateTime sunrise, DateTime sunset)
+        {
+            StripLine strip = new StripLine();
+            strip.BackColor = Color.FromArgb(40, Color.Yellow); // soft daylight
+            strip.IntervalOffset = sunrise.ToOADate();
+            strip.StripWidth = sunset.ToOADate() - sunrise.ToOADate();
+
+            chartUsage.ChartAreas[0].AxisX.StripLines.Add(strip);
+        }
+
+        private void AddNightShading(DateTime sunset, DateTime nextSunrise)
+        {
+           //This is added from sunset to midnight only
+            StripLine strip = new StripLine();
+            strip.BackColor = Color.FromArgb(40, Color.DarkBlue);
+            strip.IntervalOffset = sunset.ToOADate();
+            //strip.StripWidth = nextSunrise.ToOADate() - sunset.ToOADate();
+            //Extract date and set to midnight
+            strip.StripWidth = DateTime.Parse(nextSunrise.ToShortDateString() + " 00:00:00").ToOADate() - sunset.ToOADate();
+
+            chartUsage.ChartAreas[0].AxisX.StripLines.Add(strip);
+        }
+
+        private void AddNightBeforeSunrise(DateTime day, DateTime sunrise)
+        {
+            DateTime midnight = day.Date;
+
+            StripLine strip = new StripLine();
+            strip.BackColor = Color.FromArgb(40, Color.DarkBlue);
+            strip.IntervalOffset = midnight.ToOADate();
+            strip.StripWidth = sunrise.ToOADate() - midnight.ToOADate();
+
+            chartUsage.ChartAreas[0].AxisX.StripLines.Add(strip);
         }
 
     }
