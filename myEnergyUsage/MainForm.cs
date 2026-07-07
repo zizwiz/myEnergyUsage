@@ -45,6 +45,10 @@ namespace myEnergyUsage
             _tariffService = new TariffService(_tariffStore.Tariffs);
             _costCalculator = new CostCalculator(_tariffService);
             LoadTariffList();
+
+            dtpStartTime.Value = DateTime.Parse("00:00:00");
+            dtpEndTime.Value = DateTime.Parse("23:30:00");
+
         }
 
         private void btn_close_Click(object sender, System.EventArgs e)
@@ -204,8 +208,12 @@ namespace myEnergyUsage
 
         private void btnShowChart_Click(object sender, EventArgs e)
         {
+            DateTime? sunrise;
+            DateTime? sunset;
+
             try
             {
+            
                 if (allReadings == null || allReadings.Count == 0)
                 {
                     MessageBox.Show("No readings loaded. Please select a year and month first.",
@@ -214,6 +222,7 @@ namespace myEnergyUsage
                 }
 
                 chartUsage.Series.Clear();
+              
 
                 // ---------------------------------------------------------
                 // DAILY MODE (NO FILTERING)
@@ -320,6 +329,18 @@ namespace myEnergyUsage
                         chartUsage.Series.Add(series);
 
                         // ---------------------------------------------------------
+                        // ADD SUNRISE / SUNSET LINES
+                        // ---------------------------------------------------------
+                        sunrise = GetSunEventLocal(day, true);
+                        sunset = GetSunEventLocal(day, false);
+
+                        if (sunrise.HasValue)
+                            AddVerticalLine(sunrise.Value, Color.Red);
+
+                        if (sunset.HasValue)
+                            AddVerticalLine(sunset.Value, Color.Orange);
+
+                        // ---------------------------------------------------------
                         // ADD PEAK PERIOD SHADING (WEEKDAYS ONLY)
                         // ---------------------------------------------------------
                         if (day.DayOfWeek != DayOfWeek.Saturday &&
@@ -327,6 +348,23 @@ namespace myEnergyUsage
                         {
                             AddPeakShading(day);
                         }
+
+                        if (day.DayOfWeek != DayOfWeek.Saturday &&
+                            day.DayOfWeek != DayOfWeek.Sunday)
+                        {
+                            AddPeakShading(day);
+                        }
+
+                        // Add sunrise/sunset markers
+                        sunrise = GetSunEventLocal(day, true);
+                        sunset = GetSunEventLocal(day, false);
+
+                        if (sunrise.HasValue)
+                            AddVerticalLine(sunrise.Value, Color.Red);
+
+                        if (sunset.HasValue)
+                            AddVerticalLine(sunset.Value, Color.Orange);
+
                     }
 
                     // 5. Cost for filtered period
@@ -543,8 +581,10 @@ namespace myEnergyUsage
 
             foreach (var d in days)
             {
-               // show the date as dayname : day of month Month name Year.
-                clbDays.Items.Add(d.ToString("dddd : dd MMM yyyy"));
+                // show the date as dayname : day of month Month name Year.
+                //clbDays.Items.Add(d.ToString("dddd : dd MMM yyyy"));
+
+                clbDays.Items.Add(d.ToString("yyyy-MM-dd"));
             }
         }
 
@@ -614,6 +654,53 @@ namespace myEnergyUsage
 
             // Add to chart area
             chartUsage.ChartAreas[0].AxisX.StripLines.Add(strip);
+        }
+
+        /////////////////
+        /// Sunrise Sunset items
+        private DateTime? GetSunEventLocal(DateTime day, bool isSunrise)
+        {
+            Sunriset sr = new Sunriset();
+
+            double latitude = 52.2053;
+            double longitude = 0.1218;
+
+            double utcHours = sr.CalculateSunTime(day, latitude, longitude, isSunrise);
+
+            if (double.IsNaN(utcHours))
+                return null; // No sunrise/sunset (rare in UK but safe)
+
+            // Convert decimal hours to UTC DateTime
+            int hour = (int)Math.Floor(utcHours);
+            int minute = (int)Math.Floor((utcHours - hour) * 60);
+            int second = (int)Math.Floor(((utcHours - hour) * 60 - minute) * 60);
+
+            DateTime utcTime = new DateTime(
+                day.Year, day.Month, day.Day,
+                hour, minute, second,
+                DateTimeKind.Utc);
+
+            // Convert to UK local time (handles BST automatically)
+            DateTime localTime = TimeZoneInfo.ConvertTimeFromUtc(
+                utcTime,
+                TimeZoneInfo.FindSystemTimeZoneById("GMT Standard Time"));
+
+            return localTime;
+        }
+
+        //Draw vertical lines
+        private void AddVerticalLine(DateTime time, Color color)
+        {
+            StripLine line = new StripLine();
+            line.BorderColor = color;
+            line.BorderWidth = 2;
+            line.BorderDashStyle = ChartDashStyle.Solid;
+
+            // Position line at the exact time
+            line.IntervalOffset = time.ToOADate();
+            line.StripWidth = 0.0001; // Very thin vertical line
+
+            chartUsage.ChartAreas[0].AxisX.StripLines.Add(line);
         }
 
     }
