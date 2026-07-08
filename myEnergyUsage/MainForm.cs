@@ -726,25 +726,14 @@ namespace myEnergyUsage
             string month = cmbMonth.SelectedItem.ToString();
 
             string monthFolder = Path.Combine(_rootFolder, year, month);
-            string halfHourFolder = Path.Combine(monthFolder, "HalfHour");
 
-            if (!Directory.Exists(halfHourFolder))
-            {
-                clbDays.Items.Clear();
-                return;
-            }
+            // Load only the correct folder based on radio button
+            LoadAvailableSources(monthFolder);
 
-            var csvFiles = Directory.GetFiles(halfHourFolder, "*.csv");
-
-            foreach (var file in csvFiles)
-            {
-                EnergyType type = file.EndsWith("E.csv") ? EnergyType.Electricity : EnergyType.Gas;
-                var readings = _csvLoader.LoadCsvFile(file, type);
-                allReadings.AddRange(readings);
-            }
-
-            PopulateDayList(allReadings);
+            // Load readings for selected source
+            LoadSelectedSourceReadings();
         }
+
 
         private void cmbMonth_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -860,7 +849,99 @@ namespace myEnergyUsage
             chartUsage.ChartAreas[0].AxisX.StripLines.Add(strip);
         }
 
+        ////////////////////
+        /// Combobox items
 
+        private void LoadAvailableSources(string monthFolder)
+        {
+            cmbDataSource.Items.Clear();
+
+            string halfHourFolder = Path.Combine(monthFolder, "HalfHour");
+            string dailyFolder = Path.Combine(monthFolder, "Daily");
+
+            List<CsvSourceInfo> sources = new List<CsvSourceInfo>();
+
+            if (rdoHalfHour.Checked)
+            {
+                AddSourcesFromFolder(halfHourFolder, sources);
+            }
+            else if (rdoDaily.Checked)
+            {
+                AddSourcesFromFolder(dailyFolder, sources);
+            }
+
+            foreach (var src in sources)
+                cmbDataSource.Items.Add(src);
+
+            if (cmbDataSource.Items.Count > 0)
+                cmbDataSource.SelectedIndex = 0;
+        }
+
+        private void AddSourcesFromFolder(string folder, List<CsvSourceInfo> list)
+        {
+            if (!Directory.Exists(folder))
+                return;
+
+            var files = Directory.GetFiles(folder, "*.csv");
+
+            foreach (var file in files)
+            {
+                string name = Path.GetFileNameWithoutExtension(file);
+
+                // Example: HouseE → Location = House, Type = Electricity
+                string location = name.Substring(0, name.Length - 1);
+                char typeChar = name[name.Length - 1];
+
+                EnergyType type = typeChar == 'E'
+                    ? EnergyType.Electricity
+                    : EnergyType.Gas;
+
+                list.Add(new CsvSourceInfo
+                {
+                    FilePath = file,
+                    Location = location,
+                    Type = type
+                });
+            }
+        }
+
+        private void LoadSelectedSourceReadings()
+        {
+            allReadings.Clear();
+
+            if (cmbDataSource.SelectedItem is CsvSourceInfo src)
+            {
+                var readings = _csvLoader.LoadCsvFile(src.FilePath, src.Type);
+                allReadings.AddRange(readings);
+
+                if (rdoHalfHour.Checked)
+                {
+                    PopulateDayList(allReadings);
+                }
+                else
+                {
+                    clbDays.Items.Clear(); // daily mode does not use day selection
+                }
+            }
+        }
+
+
+        private void cmbDataSource_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            LoadSelectedSourceReadings();
+        }
+
+        private void rdoHalfHour_CheckedChanged(object sender, EventArgs e)
+        {
+            if (rdoHalfHour.Checked)
+                LoadMonthReadings();
+        }
+
+        private void rdoDaily_CheckedChanged(object sender, EventArgs e)
+        {
+            if (rdoDaily.Checked)
+                LoadMonthReadings();
+        }
     }
 
 }

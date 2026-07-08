@@ -81,6 +81,7 @@ namespace myEnergyUsage
             this.btnDelete = new System.Windows.Forms.Button();
             this.btnSave = new System.Windows.Forms.Button();
             this.btnAddNew = new System.Windows.Forms.Button();
+            this.cmbDataSource = new System.Windows.Forms.ComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.chartUsage)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.tabControl1.SuspendLayout();
@@ -155,7 +156,7 @@ namespace myEnergyUsage
             // lblCost
             // 
             this.lblCost.AutoSize = true;
-            this.lblCost.Location = new System.Drawing.Point(41, 305);
+            this.lblCost.Location = new System.Drawing.Point(669, 572);
             this.lblCost.Name = "lblCost";
             this.lblCost.Size = new System.Drawing.Size(57, 20);
             this.lblCost.TabIndex = 6;
@@ -164,7 +165,7 @@ namespace myEnergyUsage
             // lblkWh
             // 
             this.lblkWh.AutoSize = true;
-            this.lblkWh.Location = new System.Drawing.Point(42, 343);
+            this.lblkWh.Location = new System.Drawing.Point(670, 610);
             this.lblkWh.Name = "lblkWh";
             this.lblkWh.Size = new System.Drawing.Size(56, 20);
             this.lblkWh.TabIndex = 7;
@@ -181,6 +182,7 @@ namespace myEnergyUsage
             this.rdoHalfHour.TabStop = true;
             this.rdoHalfHour.Text = "Half Hourly";
             this.rdoHalfHour.UseVisualStyleBackColor = true;
+            this.rdoHalfHour.CheckedChanged += new System.EventHandler(this.rdoHalfHour_CheckedChanged);
             // 
             // rdoDaily
             // 
@@ -192,6 +194,7 @@ namespace myEnergyUsage
             this.rdoDaily.TabStop = true;
             this.rdoDaily.Text = "Daily";
             this.rdoDaily.UseVisualStyleBackColor = true;
+            this.rdoDaily.CheckedChanged += new System.EventHandler(this.rdoDaily_CheckedChanged);
             // 
             // groupBox1
             // 
@@ -217,6 +220,7 @@ namespace myEnergyUsage
             // 
             // tab_charts
             // 
+            this.tab_charts.Controls.Add(this.cmbDataSource);
             this.tab_charts.Controls.Add(this.dtpEndTime);
             this.tab_charts.Controls.Add(this.label16);
             this.tab_charts.Controls.Add(this.label15);
@@ -242,7 +246,7 @@ namespace myEnergyUsage
             // dtpEndTime
             // 
             this.dtpEndTime.Format = System.Windows.Forms.DateTimePickerFormat.Time;
-            this.dtpEndTime.Location = new System.Drawing.Point(255, 575);
+            this.dtpEndTime.Location = new System.Drawing.Point(512, 593);
             this.dtpEndTime.Name = "dtpEndTime";
             this.dtpEndTime.ShowUpDown = true;
             this.dtpEndTime.Size = new System.Drawing.Size(107, 26);
@@ -251,7 +255,7 @@ namespace myEnergyUsage
             // label16
             // 
             this.label16.AutoSize = true;
-            this.label16.Location = new System.Drawing.Point(226, 580);
+            this.label16.Location = new System.Drawing.Point(483, 598);
             this.label16.Name = "label16";
             this.label16.Size = new System.Drawing.Size(23, 20);
             this.label16.TabIndex = 14;
@@ -260,7 +264,7 @@ namespace myEnergyUsage
             // label15
             // 
             this.label15.AutoSize = true;
-            this.label15.Location = new System.Drawing.Point(28, 580);
+            this.label15.Location = new System.Drawing.Point(285, 598);
             this.label15.Name = "label15";
             this.label15.Size = new System.Drawing.Size(79, 20);
             this.label15.TabIndex = 13;
@@ -269,7 +273,7 @@ namespace myEnergyUsage
             // dtpStartTime
             // 
             this.dtpStartTime.Format = System.Windows.Forms.DateTimePickerFormat.Time;
-            this.dtpStartTime.Location = new System.Drawing.Point(113, 575);
+            this.dtpStartTime.Location = new System.Drawing.Point(370, 593);
             this.dtpStartTime.Name = "dtpStartTime";
             this.dtpStartTime.ShowUpDown = true;
             this.dtpStartTime.Size = new System.Drawing.Size(107, 26);
@@ -279,9 +283,9 @@ namespace myEnergyUsage
             // 
             this.clbDays.CheckOnClick = true;
             this.clbDays.FormattingEnabled = true;
-            this.clbDays.Location = new System.Drawing.Point(22, 381);
+            this.clbDays.Location = new System.Drawing.Point(8, 415);
             this.clbDays.Name = "clbDays";
-            this.clbDays.Size = new System.Drawing.Size(227, 165);
+            this.clbDays.Size = new System.Drawing.Size(227, 234);
             this.clbDays.TabIndex = 11;
             // 
             // tab_costs
@@ -554,6 +558,15 @@ namespace myEnergyUsage
             this.btnAddNew.UseVisualStyleBackColor = true;
             this.btnAddNew.Click += new System.EventHandler(this.btnAddNew_Click);
             // 
+            // cmbDataSource
+            // 
+            this.cmbDataSource.FormattingEnabled = true;
+            this.cmbDataSource.Location = new System.Drawing.Point(8, 282);
+            this.cmbDataSource.Name = "cmbDataSource";
+            this.cmbDataSource.Size = new System.Drawing.Size(212, 28);
+            this.cmbDataSource.TabIndex = 16;
+            this.cmbDataSource.SelectedIndexChanged += new System.EventHandler(this.cmbDataSource_SelectedIndexChanged);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
@@ -562,6 +575,7 @@ namespace myEnergyUsage
             this.Controls.Add(this.tabControl1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "MainForm";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "myEnergyUsage";
             this.Load += new System.EventHandler(this.MainForm_Load);
             ((System.ComponentModel.ISupportInitialize)(this.chartUsage)).EndInit();
@@ -625,6 +639,7 @@ namespace myEnergyUsage
         private System.Windows.Forms.Label label15;
         private System.Windows.Forms.DateTimePicker dtpStartTime;
         private System.Windows.Forms.CheckedListBox clbDays;
+        private System.Windows.Forms.ComboBox cmbDataSource;
     }
 }
 
