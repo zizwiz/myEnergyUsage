@@ -145,28 +145,7 @@ namespace myEnergyUsage
             chartUsage.ChartAreas[0].AxisX.LabelStyle.Angle = -45; // rotate labels if needed
         }
 
-        private void ShowHalfHourlyDay(IEnumerable<EnergyReading> readingsForDay, string seriesName)
-        {
-            var series = new Series(seriesName)
-            {
-                ChartType = SeriesChartType.Column, // bar chart
-                XValueType = ChartValueType.DateTime,
-                YValueType = ChartValueType.Double
-            };
-
-            foreach (var r in readingsForDay.OrderBy(x => x.DateTimeUtc))
-            {
-                // Add point: X = time, Y = kWh
-                int pointIndex = series.Points.AddXY(r.DateTimeUtc, r.KWh);
-
-                // Store cost in Tag for tooltip
-                double costPence = _costCalculator.CalculateCostForReading(r);
-                series.Points[pointIndex].Tag = costPence;
-            }
-
-            chartUsage.Series.Add(series);
-        }
-
+       
         private void chartUsage_MouseMove(object sender, MouseEventArgs e)
         {
             var hit = chartUsage.HitTest(e.X, e.Y);
@@ -192,21 +171,7 @@ namespace myEnergyUsage
             }
         }
 
-        private void ShowAllSundaysInMonth(List<EnergyReading> allHalfHourlyReadings)
-        {
-            var sundays = allHalfHourlyReadings
-                .Where(r => r.DateTimeUtc.DayOfWeek == DayOfWeek.Sunday)
-                .GroupBy(r => r.DateTimeUtc.Date);
-
-            foreach (var dayGroup in sundays)
-            {
-                string seriesName = dayGroup.Key.ToString("yyyy-MM-dd");
-                ShowHalfHourlyDay(dayGroup, seriesName);
-            }
-        }
-
-
-        private void btnShowChart_Click(object sender, EventArgs e)
+       private void btnShowChart_Click(object sender, EventArgs e)
         {
             DateTime? sunrise;
             DateTime? sunset;
@@ -221,9 +186,23 @@ namespace myEnergyUsage
                     return;
                 }
 
-                // Clear everything first
+                // FULL RESET – fixes blank chart bug
                 chartUsage.Series.Clear();
                 chartUsage.ChartAreas[0].AxisX.StripLines.Clear();
+                chartUsage.ChartAreas[0].AxisY.StripLines.Clear();
+
+                // Reset axis objects (critical!)
+                chartUsage.ChartAreas[0].AxisX = new Axis();
+                chartUsage.ChartAreas[0].AxisY = new Axis();
+
+                // Force recalculation
+                chartUsage.ChartAreas[0].AxisX.Minimum = double.NaN;
+                chartUsage.ChartAreas[0].AxisX.Maximum = double.NaN;
+                chartUsage.ChartAreas[0].RecalculateAxesScale();
+
+                // Force redraw
+                chartUsage.Invalidate();
+                chartUsage.Update();
 
 
                 // ---------------------------------------------------------
@@ -231,9 +210,6 @@ namespace myEnergyUsage
                 // ---------------------------------------------------------
                 if (rdoDaily.Checked)
                 {
-                    // Clear everything first
-                    chartUsage.Series.Clear();
-
                     // One series for the whole month
                     var series = new Series("Daily Usage")
                     {
@@ -267,11 +243,7 @@ namespace myEnergyUsage
 
                 if (rdoHalfHour.Checked)
                 {
-                    //// Clear everything first
-                    chartUsage.Series.Clear();
-                    chartUsage.ChartAreas[0].AxisX.StripLines.Clear();
-
-                    // 1. Get selected days
+                   // 1. Get selected days
                     List<DateTime> selectedDays = new List<DateTime>();
 
                     foreach (var item in clbDays.CheckedItems)
@@ -334,7 +306,13 @@ namespace myEnergyUsage
                             series.Points[idx].Tag = costPence;
                         }
 
-                        chartUsage.Series.Add(series);
+                        if (dayReadings.Count > 0)
+                        {
+                            chartUsage.Series.Add(series);
+                        }
+
+                        if (dayReadings.Count == 0)
+                            continue;
 
                         foreach (var shading_day in selectedDays)
                         {
