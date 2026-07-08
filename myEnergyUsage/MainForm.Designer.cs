@@ -281,7 +281,7 @@ namespace myEnergyUsage
             this.clbDays.FormattingEnabled = true;
             this.clbDays.Location = new System.Drawing.Point(22, 381);
             this.clbDays.Name = "clbDays";
-            this.clbDays.Size = new System.Drawing.Size(244, 165);
+            this.clbDays.Size = new System.Drawing.Size(227, 165);
             this.clbDays.TabIndex = 11;
             // 
             // tab_costs

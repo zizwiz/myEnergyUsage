@@ -453,7 +453,7 @@ namespace myEnergyUsage
                         axisX.LabelStyle.Format = "HH:mm";
 
                         // Optional: show the date once at the left
-                        axisX.Title = selectedDays[0].ToString("yyyy-MM-dd");
+                        axisX.Title = selectedDays[0].ToString("dddd : dd MMM yyyy");
 
                         axisX.MajorGrid.Enabled = false;
                         axisX.MinorGrid.Enabled = false;
