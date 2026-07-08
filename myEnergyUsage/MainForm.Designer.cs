@@ -82,11 +82,21 @@ namespace myEnergyUsage
             this.btnSave = new System.Windows.Forms.Button();
             this.btnAddNew = new System.Windows.Forms.Button();
             this.cmbDataSource = new System.Windows.Forms.ComboBox();
+            this.lbl_month = new System.Windows.Forms.Label();
+            this.lbl_year = new System.Windows.Forms.Label();
+            this.label17 = new System.Windows.Forms.Label();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.label18 = new System.Windows.Forms.Label();
+            this.label19 = new System.Windows.Forms.Label();
+            this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.button1 = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.chartUsage)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tab_charts.SuspendLayout();
             this.tab_costs.SuspendLayout();
+            this.groupBox2.SuspendLayout();
+            this.groupBox3.SuspendLayout();
             this.SuspendLayout();
             // 
             // btn_close
@@ -105,13 +115,13 @@ namespace myEnergyUsage
             this.chartUsage.ChartAreas.Add(chartArea1);
             legend1.Name = "Legend1";
             this.chartUsage.Legends.Add(legend1);
-            this.chartUsage.Location = new System.Drawing.Point(266, 16);
+            this.chartUsage.Location = new System.Drawing.Point(226, 16);
             this.chartUsage.Name = "chartUsage";
             series1.ChartArea = "ChartArea1";
             series1.Legend = "Legend1";
             series1.Name = "Series1";
             this.chartUsage.Series.Add(series1);
-            this.chartUsage.Size = new System.Drawing.Size(1108, 531);
+            this.chartUsage.Size = new System.Drawing.Size(1236, 531);
             this.chartUsage.TabIndex = 1;
             this.chartUsage.Text = "chart1";
             // 
@@ -128,18 +138,18 @@ namespace myEnergyUsage
             // cmbYear
             // 
             this.cmbYear.FormattingEnabled = true;
-            this.cmbYear.Location = new System.Drawing.Point(45, 33);
+            this.cmbYear.Location = new System.Drawing.Point(79, 30);
             this.cmbYear.Name = "cmbYear";
-            this.cmbYear.Size = new System.Drawing.Size(163, 28);
+            this.cmbYear.Size = new System.Drawing.Size(141, 28);
             this.cmbYear.TabIndex = 3;
             this.cmbYear.SelectedIndexChanged += new System.EventHandler(this.cmbYear_SelectedIndexChanged);
             // 
             // cmbMonth
             // 
             this.cmbMonth.FormattingEnabled = true;
-            this.cmbMonth.Location = new System.Drawing.Point(45, 88);
+            this.cmbMonth.Location = new System.Drawing.Point(79, 74);
             this.cmbMonth.Name = "cmbMonth";
-            this.cmbMonth.Size = new System.Drawing.Size(160, 28);
+            this.cmbMonth.Size = new System.Drawing.Size(141, 28);
             this.cmbMonth.TabIndex = 4;
             this.cmbMonth.SelectedIndexChanged += new System.EventHandler(this.cmbMonth_SelectedIndexChanged);
             // 
@@ -156,7 +166,7 @@ namespace myEnergyUsage
             // lblCost
             // 
             this.lblCost.AutoSize = true;
-            this.lblCost.Location = new System.Drawing.Point(669, 572);
+            this.lblCost.Location = new System.Drawing.Point(121, 31);
             this.lblCost.Name = "lblCost";
             this.lblCost.Size = new System.Drawing.Size(57, 20);
             this.lblCost.TabIndex = 6;
@@ -165,7 +175,7 @@ namespace myEnergyUsage
             // lblkWh
             // 
             this.lblkWh.AutoSize = true;
-            this.lblkWh.Location = new System.Drawing.Point(670, 610);
+            this.lblkWh.Location = new System.Drawing.Point(121, 57);
             this.lblkWh.Name = "lblkWh";
             this.lblkWh.Size = new System.Drawing.Size(56, 20);
             this.lblkWh.TabIndex = 7;
@@ -175,7 +185,7 @@ namespace myEnergyUsage
             // 
             this.rdoHalfHour.AutoSize = true;
             this.rdoHalfHour.Checked = true;
-            this.rdoHalfHour.Location = new System.Drawing.Point(27, 52);
+            this.rdoHalfHour.Location = new System.Drawing.Point(6, 29);
             this.rdoHalfHour.Name = "rdoHalfHour";
             this.rdoHalfHour.Size = new System.Drawing.Size(112, 24);
             this.rdoHalfHour.TabIndex = 8;
@@ -187,7 +197,7 @@ namespace myEnergyUsage
             // rdoDaily
             // 
             this.rdoDaily.AutoSize = true;
-            this.rdoDaily.Location = new System.Drawing.Point(27, 82);
+            this.rdoDaily.Location = new System.Drawing.Point(124, 29);
             this.rdoDaily.Name = "rdoDaily";
             this.rdoDaily.Size = new System.Drawing.Size(68, 24);
             this.rdoDaily.TabIndex = 9;
@@ -200,9 +210,9 @@ namespace myEnergyUsage
             // 
             this.groupBox1.Controls.Add(this.rdoDaily);
             this.groupBox1.Controls.Add(this.rdoHalfHour);
-            this.groupBox1.Location = new System.Drawing.Point(45, 148);
+            this.groupBox1.Location = new System.Drawing.Point(20, 120);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(187, 128);
+            this.groupBox1.Size = new System.Drawing.Size(200, 74);
             this.groupBox1.TabIndex = 10;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Graph Type";
@@ -215,30 +225,29 @@ namespace myEnergyUsage
             this.tabControl1.Location = new System.Drawing.Point(0, 0);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(1424, 690);
+            this.tabControl1.Size = new System.Drawing.Size(1527, 703);
             this.tabControl1.TabIndex = 11;
             // 
             // tab_charts
             // 
+            this.tab_charts.Controls.Add(this.groupBox3);
+            this.tab_charts.Controls.Add(this.groupBox2);
+            this.tab_charts.Controls.Add(this.label17);
+            this.tab_charts.Controls.Add(this.lbl_year);
+            this.tab_charts.Controls.Add(this.lbl_month);
             this.tab_charts.Controls.Add(this.cmbDataSource);
-            this.tab_charts.Controls.Add(this.dtpEndTime);
-            this.tab_charts.Controls.Add(this.label16);
-            this.tab_charts.Controls.Add(this.label15);
-            this.tab_charts.Controls.Add(this.dtpStartTime);
             this.tab_charts.Controls.Add(this.clbDays);
             this.tab_charts.Controls.Add(this.chartUsage);
             this.tab_charts.Controls.Add(this.btn_close);
             this.tab_charts.Controls.Add(this.btnSelectRoot);
-            this.tab_charts.Controls.Add(this.lblkWh);
             this.tab_charts.Controls.Add(this.ShowChart);
             this.tab_charts.Controls.Add(this.groupBox1);
-            this.tab_charts.Controls.Add(this.lblCost);
             this.tab_charts.Controls.Add(this.cmbMonth);
             this.tab_charts.Controls.Add(this.cmbYear);
             this.tab_charts.Location = new System.Drawing.Point(4, 29);
             this.tab_charts.Name = "tab_charts";
             this.tab_charts.Padding = new System.Windows.Forms.Padding(3);
-            this.tab_charts.Size = new System.Drawing.Size(1416, 657);
+            this.tab_charts.Size = new System.Drawing.Size(1519, 670);
             this.tab_charts.TabIndex = 0;
             this.tab_charts.Text = "Charts";
             this.tab_charts.UseVisualStyleBackColor = true;
@@ -246,7 +255,7 @@ namespace myEnergyUsage
             // dtpEndTime
             // 
             this.dtpEndTime.Format = System.Windows.Forms.DateTimePickerFormat.Time;
-            this.dtpEndTime.Location = new System.Drawing.Point(512, 593);
+            this.dtpEndTime.Location = new System.Drawing.Point(212, 28);
             this.dtpEndTime.Name = "dtpEndTime";
             this.dtpEndTime.ShowUpDown = true;
             this.dtpEndTime.Size = new System.Drawing.Size(107, 26);
@@ -255,7 +264,7 @@ namespace myEnergyUsage
             // label16
             // 
             this.label16.AutoSize = true;
-            this.label16.Location = new System.Drawing.Point(483, 598);
+            this.label16.Location = new System.Drawing.Point(183, 33);
             this.label16.Name = "label16";
             this.label16.Size = new System.Drawing.Size(23, 20);
             this.label16.TabIndex = 14;
@@ -264,16 +273,16 @@ namespace myEnergyUsage
             // label15
             // 
             this.label15.AutoSize = true;
-            this.label15.Location = new System.Drawing.Point(285, 598);
+            this.label15.Location = new System.Drawing.Point(18, 33);
             this.label15.Name = "label15";
-            this.label15.Size = new System.Drawing.Size(79, 20);
+            this.label15.Size = new System.Drawing.Size(46, 20);
             this.label15.TabIndex = 13;
-            this.label15.Text = "Time from";
+            this.label15.Text = "From";
             // 
             // dtpStartTime
             // 
             this.dtpStartTime.Format = System.Windows.Forms.DateTimePickerFormat.Time;
-            this.dtpStartTime.Location = new System.Drawing.Point(370, 593);
+            this.dtpStartTime.Location = new System.Drawing.Point(70, 28);
             this.dtpStartTime.Name = "dtpStartTime";
             this.dtpStartTime.ShowUpDown = true;
             this.dtpStartTime.Size = new System.Drawing.Size(107, 26);
@@ -283,13 +292,14 @@ namespace myEnergyUsage
             // 
             this.clbDays.CheckOnClick = true;
             this.clbDays.FormattingEnabled = true;
-            this.clbDays.Location = new System.Drawing.Point(8, 415);
+            this.clbDays.Location = new System.Drawing.Point(20, 234);
             this.clbDays.Name = "clbDays";
-            this.clbDays.Size = new System.Drawing.Size(227, 234);
+            this.clbDays.Size = new System.Drawing.Size(200, 326);
             this.clbDays.TabIndex = 11;
             // 
             // tab_costs
             // 
+            this.tab_costs.Controls.Add(this.button1);
             this.tab_costs.Controls.Add(this.label14);
             this.tab_costs.Controls.Add(this.label13);
             this.tab_costs.Controls.Add(this.label12);
@@ -320,7 +330,7 @@ namespace myEnergyUsage
             this.tab_costs.Location = new System.Drawing.Point(4, 29);
             this.tab_costs.Name = "tab_costs";
             this.tab_costs.Padding = new System.Windows.Forms.Padding(3);
-            this.tab_costs.Size = new System.Drawing.Size(1416, 657);
+            this.tab_costs.Size = new System.Drawing.Size(1519, 670);
             this.tab_costs.TabIndex = 1;
             this.tab_costs.Text = "Costs";
             this.tab_costs.UseVisualStyleBackColor = true;
@@ -561,17 +571,98 @@ namespace myEnergyUsage
             // cmbDataSource
             // 
             this.cmbDataSource.FormattingEnabled = true;
-            this.cmbDataSource.Location = new System.Drawing.Point(8, 282);
+            this.cmbDataSource.Location = new System.Drawing.Point(79, 200);
             this.cmbDataSource.Name = "cmbDataSource";
-            this.cmbDataSource.Size = new System.Drawing.Size(212, 28);
+            this.cmbDataSource.Size = new System.Drawing.Size(141, 28);
             this.cmbDataSource.TabIndex = 16;
             this.cmbDataSource.SelectedIndexChanged += new System.EventHandler(this.cmbDataSource_SelectedIndexChanged);
+            // 
+            // lbl_month
+            // 
+            this.lbl_month.AutoSize = true;
+            this.lbl_month.Location = new System.Drawing.Point(19, 77);
+            this.lbl_month.Name = "lbl_month";
+            this.lbl_month.Size = new System.Drawing.Size(54, 20);
+            this.lbl_month.TabIndex = 17;
+            this.lbl_month.Text = "Month";
+            // 
+            // lbl_year
+            // 
+            this.lbl_year.AutoSize = true;
+            this.lbl_year.Location = new System.Drawing.Point(19, 33);
+            this.lbl_year.Name = "lbl_year";
+            this.lbl_year.Size = new System.Drawing.Size(43, 20);
+            this.lbl_year.TabIndex = 18;
+            this.lbl_year.Text = "Year";
+            // 
+            // label17
+            // 
+            this.label17.AutoSize = true;
+            this.label17.Location = new System.Drawing.Point(16, 203);
+            this.label17.Name = "label17";
+            this.label17.Size = new System.Drawing.Size(50, 20);
+            this.label17.TabIndex = 19;
+            this.label17.Text = "Meter";
+            // 
+            // groupBox2
+            // 
+            this.groupBox2.Controls.Add(this.label19);
+            this.groupBox2.Controls.Add(this.label18);
+            this.groupBox2.Controls.Add(this.lblCost);
+            this.groupBox2.Controls.Add(this.lblkWh);
+            this.groupBox2.Location = new System.Drawing.Point(440, 566);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(221, 96);
+            this.groupBox2.TabIndex = 20;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "Totals";
+            // 
+            // label18
+            // 
+            this.label18.AutoSize = true;
+            this.label18.Location = new System.Drawing.Point(6, 31);
+            this.label18.Name = "label18";
+            this.label18.Size = new System.Drawing.Size(50, 20);
+            this.label18.TabIndex = 8;
+            this.label18.Text = "Cost: ";
+            // 
+            // label19
+            // 
+            this.label19.AutoSize = true;
+            this.label19.Location = new System.Drawing.Point(6, 57);
+            this.label19.Name = "label19";
+            this.label19.Size = new System.Drawing.Size(109, 20);
+            this.label19.TabIndex = 9;
+            this.label19.Text = "Energy Used: ";
+            // 
+            // groupBox3
+            // 
+            this.groupBox3.Controls.Add(this.dtpEndTime);
+            this.groupBox3.Controls.Add(this.label16);
+            this.groupBox3.Controls.Add(this.label15);
+            this.groupBox3.Controls.Add(this.dtpStartTime);
+            this.groupBox3.Location = new System.Drawing.Point(20, 580);
+            this.groupBox3.Name = "groupBox3";
+            this.groupBox3.Size = new System.Drawing.Size(337, 84);
+            this.groupBox3.TabIndex = 21;
+            this.groupBox3.TabStop = false;
+            this.groupBox3.Text = "Time Selection";
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(1251, 539);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(104, 45);
+            this.button1.TabIndex = 27;
+            this.button1.Text = "Close";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.btn_close_Click);
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1424, 690);
+            this.ClientSize = new System.Drawing.Size(1527, 703);
             this.Controls.Add(this.tabControl1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "MainForm";
@@ -586,6 +677,10 @@ namespace myEnergyUsage
             this.tab_charts.PerformLayout();
             this.tab_costs.ResumeLayout(false);
             this.tab_costs.PerformLayout();
+            this.groupBox2.ResumeLayout(false);
+            this.groupBox2.PerformLayout();
+            this.groupBox3.ResumeLayout(false);
+            this.groupBox3.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -640,6 +735,14 @@ namespace myEnergyUsage
         private System.Windows.Forms.DateTimePicker dtpStartTime;
         private System.Windows.Forms.CheckedListBox clbDays;
         private System.Windows.Forms.ComboBox cmbDataSource;
+        private System.Windows.Forms.GroupBox groupBox3;
+        private System.Windows.Forms.GroupBox groupBox2;
+        private System.Windows.Forms.Label label19;
+        private System.Windows.Forms.Label label18;
+        private System.Windows.Forms.Label label17;
+        private System.Windows.Forms.Label lbl_year;
+        private System.Windows.Forms.Label lbl_month;
+        private System.Windows.Forms.Button button1;
     }
 }
 

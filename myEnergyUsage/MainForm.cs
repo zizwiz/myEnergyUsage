@@ -6,6 +6,7 @@ using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
+using CenteredMessagebox;
 using myEnergyUsage.Models;
 using Newtonsoft.Json;
 
@@ -169,7 +170,7 @@ namespace myEnergyUsage
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error loading years: {ex.Message}", "Error",
+                MsgBox.Show($"Error loading years: {ex.Message}", "Error",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
@@ -207,7 +208,7 @@ namespace myEnergyUsage
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error loading months: {ex.Message}", "Error",
+                MsgBox.Show($"Error loading months: {ex.Message}", "Error",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
@@ -236,7 +237,7 @@ namespace myEnergyUsage
 
                 if (allReadings == null || allReadings.Count == 0)
                 {
-                    MessageBox.Show("No readings loaded. Please select a year and month first.",
+                    MsgBox.Show("No readings loaded. Please select a year and month first.",
                         "No Data", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
@@ -316,7 +317,7 @@ namespace myEnergyUsage
 
                     if (selectedDays.Count == 0)
                     {
-                        MessageBox.Show("Please select at least one day.", "No Days Selected",
+                        MsgBox.Show("Please select at least one day.", "No Days Selected",
                             MessageBoxButtons.OK, MessageBoxIcon.Warning);
                         return;
                     }
@@ -329,7 +330,7 @@ namespace myEnergyUsage
 
                     if (endTime <= startTime)
                     {
-                        MessageBox.Show("End time must be after start time.", "Invalid Time Range",
+                        MsgBox.Show("End time must be after start time.", "Invalid Time Range",
                             MessageBoxButtons.OK, MessageBoxIcon.Warning);
                         return;
                     }
@@ -339,7 +340,7 @@ namespace myEnergyUsage
 
                     if (filteredReadings.Count == 0)
                     {
-                        MessageBox.Show("No readings match the selected filters.", "No Data",
+                        MsgBox.Show("No readings match the selected filters.", "No Data",
                             MessageBoxButtons.OK, MessageBoxIcon.Information);
                         return;
                     }
@@ -487,7 +488,7 @@ namespace myEnergyUsage
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error generating chart:\n" + ex.Message, "Error",
+                MsgBox.Show("Error generating chart:\n" + ex.Message, "Error",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
@@ -517,7 +518,7 @@ namespace myEnergyUsage
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error loading tariff file:\n" + ex.Message,
+                MsgBox.Show("Error loading tariff file:\n" + ex.Message,
                     "Tariff Load Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
                 return new TariffStore();
@@ -533,7 +534,7 @@ namespace myEnergyUsage
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error saving tariff file:\n" + ex.Message,
+                MsgBox.Show("Error saving tariff file:\n" + ex.Message,
                     "Tariff Save Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
@@ -597,7 +598,7 @@ namespace myEnergyUsage
                 // Validate name
                 if (string.IsNullOrWhiteSpace(txtName.Text))
                 {
-                    MessageBox.Show("Tariff must have a name.", "Validation Error",
+                    MsgBox.Show("Tariff must have a name.", "Validation Error",
                         MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
@@ -646,12 +647,12 @@ namespace myEnergyUsage
                 // Refresh list
                 LoadTariffList();
 
-                MessageBox.Show("Tariff saved successfully.", "Saved",
+                MsgBox.Show("Tariff saved successfully.", "Saved",
                     MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error saving tariff:\n" + ex.Message, "Error",
+                MsgBox.Show("Error saving tariff:\n" + ex.Message, "Error",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
@@ -674,7 +675,7 @@ namespace myEnergyUsage
 
             LoadTariffList();
 
-            MessageBox.Show("Tariff deleted.", "Deleted",
+            MsgBox.Show("Tariff deleted.", "Deleted",
                 MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 

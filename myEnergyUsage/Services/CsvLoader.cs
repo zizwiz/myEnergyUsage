@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Windows.Forms;
+using CenteredMessagebox;
 using myEnergyUsage.Models;
 
 public class CsvLoader
@@ -67,12 +69,13 @@ public class CsvLoader
         {
             // Handle IO errors (file locked, etc.)
             // Log or show message to user
-            Console.WriteLine($"IO error reading {filePath}: {ex.Message}");
+            MsgBox.Show(($"IO error reading {filePath}: {ex.Message}"), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
         catch (Exception ex)
         {
             // Catch-all for unexpected errors
-            Console.WriteLine($"Unexpected error reading {filePath}: {ex.Message}");
+            MsgBox.Show(($"Unexpected error reading {filePath}: {ex.Message}"), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
         }
 
         return readings;
