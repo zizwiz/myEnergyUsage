@@ -22,7 +22,11 @@ namespace myEnergyUsage
         private string _rootFolder;
         private string _tariffFilePath;
 
-      
+        //used to store data to use in sunrise and sunset tooltips
+        private List<DateTime> sunriseMarkers = new List<DateTime>();
+        private List<DateTime> sunsetMarkers = new List<DateTime>();
+
+
         public MainForm()
         {
             InitializeComponent();
@@ -49,7 +53,81 @@ namespace myEnergyUsage
             dtpStartTime.Value = DateTime.Parse("00:00:00");
             dtpEndTime.Value = DateTime.Parse("23:30:00");
 
+            //tooltip event handler
+            chartUsage.GetToolTipText += chartUsage_GetToolTipText;
+
+
         }
+
+        //tooltip logic
+        private void chartUsage_GetToolTipText(object sender, ToolTipEventArgs e)
+        {
+            // Only show tooltips for data points
+            if (e.HitTestResult.ChartElementType == ChartElementType.DataPoint)
+            {
+                DataPoint point = e.HitTestResult.Series.Points[e.HitTestResult.PointIndex];
+
+                // Extract the DateTime from the X value
+                DateTime dt = DateTime.FromOADate(point.XValue);
+
+                // Extract kWh from Y value
+                double kwh = point.YValues[0];
+
+                // Extract cost (stored in Tag)
+                double costPence = 0;
+                if (point.Tag != null)
+                    costPence = (double)point.Tag;
+
+                if (rdoHalfHour.Checked)
+                {
+                    // Build tooltip text
+                    e.Text =
+                        "Date: " + dt.ToString("dd-MMM-yyyy") + Environment.NewLine +
+                        "Time: " + dt.ToString("HH:mm") + Environment.NewLine +
+                        "Usage: " + kwh.ToString("F3") + " kWh" + Environment.NewLine +
+                        "Cost: £" + (costPence / 100.0).ToString("F4");
+                }
+                else if (rdoDaily.Checked)
+                {
+                    e.Text =
+                        "Usage: " + kwh.ToString("F3") + " kWh" + Environment.NewLine +
+                        "Cost: £" + (costPence / 100.0).ToString("F4");
+                }
+
+            }
+
+            // Second: sunrise/sunset tooltip detection
+            HitTestResult h = e.HitTestResult;
+
+            if (h.ChartArea != null)
+            {
+                Axis axisX = h.ChartArea.AxisX;
+
+                // Convert mouse pixel to chart X-value
+                double mouseXValue = axisX.PixelPositionToValue(e.X);
+
+                // Check sunrise markers
+                foreach (var sr in sunriseMarkers)
+                {
+                    if (Math.Abs(mouseXValue - sr.ToOADate()) < 0.01) // ~15 minutes tolerance
+                    {
+                        e.Text = "Sunrise: " + sr.ToString("HH:mm");
+                        return;
+                    }
+                }
+
+                // Check sunset markers
+                foreach (var ss in sunsetMarkers)
+                {
+                    if (Math.Abs(mouseXValue - ss.ToOADate()) < 0.01)
+                    {
+                        e.Text = "Sunset: " + ss.ToString("HH:mm");
+                        return;
+                    }
+                }
+            }
+        }
+
 
         private void btn_close_Click(object sender, System.EventArgs e)
         {
@@ -148,33 +226,30 @@ namespace myEnergyUsage
        
         private void chartUsage_MouseMove(object sender, MouseEventArgs e)
         {
-            var hit = chartUsage.HitTest(e.X, e.Y);
+            //var hit = chartUsage.HitTest(e.X, e.Y);
 
-            if (hit.ChartElementType == ChartElementType.DataPoint)
-            {
-                var point = hit.Series.Points[hit.PointIndex];
+            //if (hit.ChartElementType == ChartElementType.DataPoint)
+            //{
+            //    var point = hit.Series.Points[hit.PointIndex];
 
-                double kwh = point.YValues[0];
-                double costPence = 0.0;
+            //    double kwh = point.YValues[0];
+            //    double costPence = 0.0;
 
-                if (point.Tag is double c)
-                    costPence = c;
-
-                // Show tooltip: kWh and cost
-                string tooltip = $"Usage: {kwh:F3} kWh\nCost: £{costPence / 100.0:F2}";
-
-                toolTip1.SetToolTip(chartUsage, tooltip);
-            }
-            else
-            {
-                toolTip1.SetToolTip(chartUsage, string.Empty);
-            }
+            //    if (point.Tag is double c)
+            //        costPence = c;
+            //}
+            //else
+            //{
+            //   //Do nothing
+            //}
         }
 
        private void btnShowChart_Click(object sender, EventArgs e)
         {
             DateTime? sunrise;
             DateTime? sunset;
+
+            List<DateTime> selectedDays = new List<DateTime>();
 
             try
             {
@@ -185,6 +260,10 @@ namespace myEnergyUsage
                         "No Data", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
+
+                // Clear Sunrise and sunset tooltip data
+                sunriseMarkers.Clear();
+                sunsetMarkers.Clear();
 
                 // FULL RESET – fixes blank chart bug
                 chartUsage.Series.Clear();
@@ -244,7 +323,7 @@ namespace myEnergyUsage
                 if (rdoHalfHour.Checked)
                 {
                    // 1. Get selected days
-                    List<DateTime> selectedDays = new List<DateTime>();
+                   // List<DateTime> selectedDays = new List<DateTime>();
 
                     foreach (var item in clbDays.CheckedItems)
                     {
@@ -327,8 +406,18 @@ namespace myEnergyUsage
                                 continue;
 
                             // Vertical markers
-                            AddVerticalLine(sunrise.Value, Color.Red);
-                            AddVerticalLine(sunset.Value, Color.Orange);
+                            if (sunrise.HasValue)
+                            {
+                                AddVerticalLine(sunrise.Value, Color.Red);
+                                sunriseMarkers.Add(sunrise.Value);
+                            }
+
+                            if (sunset.HasValue)
+                            {
+                                AddVerticalLine(sunset.Value, Color.Orange);
+                                sunsetMarkers.Add(sunset.Value);
+                            }
+
 
                             // ---------------------------------------------------------
                             // NIGHT BEFORE SUNRISE (00:00 → sunrise)
@@ -357,7 +446,6 @@ namespace myEnergyUsage
                             {
                                 AddPeakShading(shading_day);
                             }
-
                         }
 
                     }
@@ -367,6 +455,15 @@ namespace myEnergyUsage
 
                     lblCost.Text = "Total Cost: £" + (costResult.TotalCostPence / 100.0).ToString("F2");
                     lblkWh.Text = "Total kWh: " + costResult.TotalKWh.ToString("F3");
+                }
+
+                if (rdoHalfHour.Checked)
+                {
+                    // ---------------------------------------------------------
+                    // Day before shading as bars start away from y-axis
+                    // ---------------------------------------------------------
+
+                    AddYesterdayPaddingShade(selectedDays[0]);
                 }
             }
             catch (Exception ex)
@@ -729,6 +826,21 @@ namespace myEnergyUsage
 
             chartUsage.ChartAreas[0].AxisX.StripLines.Add(strip);
         }
+
+        private void AddYesterdayPaddingShade(DateTime day)
+        {
+            DateTime yesterday = day.AddDays(-1);
+            DateTime start = yesterday.Date.AddHours(23).AddMinutes(00);
+            DateTime end = day.Date;
+
+            StripLine strip = new StripLine();
+            strip.BackColor = Color.FromArgb(40, Color.DarkBlue);
+            strip.IntervalOffset = start.ToOADate();
+            strip.StripWidth = end.ToOADate() - start.ToOADate();
+
+            chartUsage.ChartAreas[0].AxisX.StripLines.Add(strip);
+        }
+
 
     }
 
