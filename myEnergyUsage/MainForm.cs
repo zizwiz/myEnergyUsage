@@ -220,37 +220,17 @@ namespace myEnergyUsage
             chartUsage.ChartAreas[0].AxisX.Title = "Time";
             chartUsage.ChartAreas[0].AxisY.Title = "kWh";
             chartUsage.ChartAreas[0].AxisX.IntervalAutoMode = IntervalAutoMode.VariableCount;
-            chartUsage.ChartAreas[0].AxisX.LabelStyle.Angle = -45; // rotate labels if needed
+            //chartUsage.ChartAreas[0].AxisX.LabelStyle.Angle = -45; // rotate labels if needed
         }
 
-       
-        private void chartUsage_MouseMove(object sender, MouseEventArgs e)
-        {
-            //var hit = chartUsage.HitTest(e.X, e.Y);
-
-            //if (hit.ChartElementType == ChartElementType.DataPoint)
-            //{
-            //    var point = hit.Series.Points[hit.PointIndex];
-
-            //    double kwh = point.YValues[0];
-            //    double costPence = 0.0;
-
-            //    if (point.Tag is double c)
-            //        costPence = c;
-            //}
-            //else
-            //{
-            //   //Do nothing
-            //}
-        }
-
-       private void btnShowChart_Click(object sender, EventArgs e)
+        private void btnShowChart_Click(object sender, EventArgs e)
         {
             DateTime? sunrise;
             DateTime? sunset;
 
             List<DateTime> selectedDays = new List<DateTime>();
 
+           
             try
             {
 
@@ -307,6 +287,8 @@ namespace myEnergyUsage
 
                     chartUsage.Series.Add(series);
 
+                    chartUsage.ChartAreas[0].AxisX.LabelStyle.Angle = -45; // rotate labels if needed
+
                     // Cost for whole month
                     var costResult = _costCalculator.CalculateCostForPeriod(allReadings);
 
@@ -338,6 +320,8 @@ namespace myEnergyUsage
                             MessageBoxButtons.OK, MessageBoxIcon.Warning);
                         return;
                     }
+
+                    bool isSingleDay = selectedDays.Count == 1;
 
                     // 2. Get selected time range
                     TimeSpan startTime = dtpStartTime.Value.TimeOfDay;
@@ -455,6 +439,36 @@ namespace myEnergyUsage
 
                     lblCost.Text = "Total Cost: £" + (costResult.TotalCostPence / 100.0).ToString("F2");
                     lblkWh.Text = "Total kWh: " + costResult.TotalKWh.ToString("F3");
+
+                    //smart X-axis formatting
+                    Axis axisX = chartUsage.ChartAreas[0].AxisX;
+                    axisX.IsLabelAutoFit = true;
+                    axisX.LabelAutoFitStyle = LabelAutoFitStyles.DecreaseFont | LabelAutoFitStyles.LabelsAngleStep30;
+
+
+
+                    if (isSingleDay)
+                    {
+                        // Single day → show time only
+                        axisX.LabelStyle.Format = "HH:mm";
+
+                        // Optional: show the date once at the left
+                        axisX.Title = selectedDays[0].ToString("yyyy-MM-dd");
+
+                        axisX.MajorGrid.Enabled = false;
+                        axisX.MinorGrid.Enabled = false;
+                    }
+                    else
+                    {
+                        // Multiple days → show date at midnight only
+                        axisX.IntervalType = DateTimeIntervalType.Days;
+                        axisX.Interval = 1;
+                        axisX.LabelStyle.Format = "dd MMM";
+
+                        // Reduce clutter
+                        axisX.IntervalAutoMode = IntervalAutoMode.VariableCount;
+                        axisX.Interval = 1; // one label per day
+                    }
                 }
 
                 if (rdoHalfHour.Checked)
@@ -465,6 +479,11 @@ namespace myEnergyUsage
 
                     AddYesterdayPaddingShade(selectedDays[0]);
                 }
+
+                chartUsage.ChartAreas[0].AxisX.LabelStyle.Angle = -45; // rotate labels if needed
+
+               
+
             }
             catch (Exception ex)
             {

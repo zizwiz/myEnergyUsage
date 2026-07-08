@@ -113,7 +113,6 @@ namespace myEnergyUsage
             this.chartUsage.Size = new System.Drawing.Size(1108, 531);
             this.chartUsage.TabIndex = 1;
             this.chartUsage.Text = "chart1";
-            this.chartUsage.MouseMove += new System.Windows.Forms.MouseEventHandler(this.chartUsage_MouseMove);
             // 
             // ShowChart
             // 
