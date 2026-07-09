@@ -27,9 +27,10 @@ The folder structure where the data is stored and how it is named is important. 
 </p>
 
 The CSV file name explains what meter it belongs to e.g. 
-•	ChurchE.csv is the Electric meter for the church. 
-•	PresbyteryG.csv is the gas meter for the presbytery.
-
+<ul>
+<li>ChurchE.csv is the Electric meter for the church.</li>
+<li>PresbyteryG.csv is the gas meter for the presbytery.</li>
+</ul>
 There are two types of data that can be charted, the half hourly energy usage and the daily usage. The layout of the csv file is shown below:
 
 ##### HalfHour	
@@ -63,12 +64,14 @@ Once you have selected the data you can click on “Show Data” and the chart will 
 </p> 
 
 The chart is shaded in such a way as to give a pictorial explanation of the different times in a day. 
-•	Energy usage is shaded dark blue
-•	Night time is shaded light blue
-•	Day light is shaded yellow
-•	Peak period for energy is shaded grey
-•	Sunrise is indicated with a red vertical line
-•	Sunset is indicated with an orange vertical line
+<ul>
+<li>Energy usage is shaded dark blue</li>
+<li>Night time is shaded light blue</li>
+<li>Day light is shaded yellow</li>
+<li>Peak period for energy is shaded grey</li>
+<li>Sunrise is indicated with a red vertical line</li>
+<li>Sunset is indicated with an orange vertical line</li>
+</ul>
 
 An interesting fact is that overnight there is a constant use of energy. As soon as the sun comes up and there is no cloud, we see the solar panels start to produce energy and the amount of energy that needs to be imported decreases. The decrease increases as the suns angle increases as the morning progresses. 
 
@@ -139,11 +142,13 @@ The tariff that you are on may change and you will want to calculate the energy 
 <img src=myEnergyUsage/Images/tariff1.png alt="Setting Tariff"/>
 </p>
 
-You can 
-•	Edit an entry by clicking on the tariff entry on the right-hand side.
-•	Create a new entry into the .json file by clicking on the new button. 
-•	Save the updated or new entry by clicking on the save button.
-•	Delete the entry by clicking on the delete button  
+You can
+<ul>
+<li>Edit an entry by clicking on the tariff entry on the right-hand side.</li>
+<li>Create a new entry into the .json file by clicking on the new button.</li>
+<li>Save the updated or new entry by clicking on the save button.</li>
+<li>Delete the entry by clicking on the delete button</li>
+</ul>
 
 End of File
 
