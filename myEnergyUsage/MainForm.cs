@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
 using CenteredMessagebox;
 using myEnergyUsage.Models;
+using myEnergyUsage.utils;
 using Newtonsoft.Json;
 
 namespace myEnergyUsage
@@ -231,6 +232,8 @@ namespace myEnergyUsage
 
             List<DateTime> selectedDays = new List<DateTime>();
 
+            int counter;
+
            
             try
             {
@@ -287,7 +290,7 @@ namespace myEnergyUsage
                     }
 
                     chartUsage.Series.Add(series);
-
+                    chartUsage.ChartAreas[0].AxisY.Title = "kWh";
                     chartUsage.ChartAreas[0].AxisX.LabelStyle.Angle = -45; // rotate labels if needed
 
                     // Cost for whole month
@@ -305,6 +308,8 @@ namespace myEnergyUsage
 
                 if (rdoHalfHour.Checked)
                 {
+                    counter = 0;
+
                    // 1. Get selected days
                    // List<DateTime> selectedDays = new List<DateTime>();
 
@@ -348,6 +353,8 @@ namespace myEnergyUsage
                     // 4. Create one series per selected day
                     foreach (var day in selectedDays)
                     {
+                        counter++;
+
                         string seriesName = day.ToString("yyyy-MM-dd");
 
                         var dayReadings = filteredReadings
@@ -359,7 +366,8 @@ namespace myEnergyUsage
                         {
                             ChartType = SeriesChartType.Column,
                             XValueType = ChartValueType.DateTime,
-                            YValueType = ChartValueType.Double
+                            YValueType = ChartValueType.Double,
+                            Color = Color.FromName(ColourList.SelectColour(counter))
                         };
 
                         foreach (var r in dayReadings)
@@ -481,6 +489,7 @@ namespace myEnergyUsage
                     AddYesterdayPaddingShade(selectedDays[0]);
                 }
 
+                chartUsage.ChartAreas[0].AxisY.Title = "kWh";
                 chartUsage.ChartAreas[0].AxisX.LabelStyle.Angle = -45; // rotate labels if needed
 
                
@@ -749,7 +758,6 @@ namespace myEnergyUsage
 
             StripLine strip = new StripLine();
             strip.BackColor = Color.FromArgb(40, Color.Gray); // light grey
-                                                              // strip.BackColor = Color.FromArgb(40, Color.DarkGray); // dark grey
             strip.IntervalOffset = start.ToOADate();
             strip.StripWidth = end.ToOADate() - start.ToOADate();
 

@@ -1,0 +1,52 @@
+{
+  "Tariffs": [
+    {
+      "Name": "Electricity June 2026",
+      "EffectiveFrom": "2026-06-01T00:00:00Z",
+      "EffectiveTo": "2026-06-30T23:59:59Z",
+      "Type": 0,
+      "DayRatePencePerKWh": 28.512,
+      "NightRatePencePerKWh": 20.999,
+      "FlatRatePencePerKWh": 0.0,
+      "StandingChargePencePerDay": 125.6278,
+      "NrabPencePerKWh": 0.5153,
+      "HasTimeOfDayRates": true
+    },
+    {
+      "Name": "Gas June 2026",
+      "EffectiveFrom": "2026-06-01T00:00:00Z",
+      "EffectiveTo": "2026-06-30T23:59:59Z",
+      "Type": 1,
+      "DayRatePencePerKWh": 0.0,
+      "NightRatePencePerKWh": 0.0,
+      "FlatRatePencePerKWh": 7.123,
+      "StandingChargePencePerDay": 28.0,
+      "NrabPencePerKWh": 0.0,
+      "HasTimeOfDayRates": false
+    },
+    {
+      "Name": "Electricity July 2026",
+      "EffectiveFrom": "2026-07-01T00:00:00",
+      "EffectiveTo": "2026-07-31T23:59:59",
+      "Type": 0,
+      "DayRatePencePerKWh": 28.512,
+      "NightRatePencePerKWh": 20.999,
+      "FlatRatePencePerKWh": 0.0,
+      "StandingChargePencePerDay": 125.6278,
+      "NrabPencePerKWh": 0.5153,
+      "HasTimeOfDayRates": true
+    },
+    {
+      "Name": "Gas July 2026",
+      "EffectiveFrom": "2026-07-01T00:00:00",
+      "EffectiveTo": "2026-07-31T23:59:59",
+      "Type": 1,
+      "DayRatePencePerKWh": 0.0,
+      "NightRatePencePerKWh": 0.0,
+      "FlatRatePencePerKWh": 7.123,
+      "StandingChargePencePerDay": 28.0,
+      "NrabPencePerKWh": 0.0,
+      "HasTimeOfDayRates": false
+    }
+  ]
+}
