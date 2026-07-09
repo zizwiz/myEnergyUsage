@@ -112,6 +112,23 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="help\help.ico" />
+    <Content Include="Images\daily_initial.png" />
+    <Content Include="Images\daily_layout.png" />
+    <Content Include="Images\daily_show_chart.png" />
+    <Content Include="Images\filestructure.png" />
+    <Content Include="Images\halfhour_explanation.png" />
+    <Content Include="Images\halfhour_layout.png" />
+    <Content Include="Images\icon.png" />
+    <Content Include="Images\json_layout.png" />
+    <Content Include="Images\multichart1.png" />
+    <Content Include="Images\multichart2.png" />
+    <Content Include="Images\multichart3.png" />
+    <Content Include="Images\select_data.png" />
+    <Content Include="Images\show_chart.png" />
+    <Content Include="Images\solar.png" />
+    <Content Include="Images\startup.png" />
+    <Content Include="Images\tariff1.png" />
+    <Content Include="Images\tooltip.png" />
     <Content Include="myicon.ico" />
   </ItemGroup>
   <ItemGroup>
@@ -119,8 +136,6 @@
       <Version>13.0.4</Version>
     </PackageReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Images\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
