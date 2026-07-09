@@ -37,7 +37,7 @@ namespace myEnergyUsage
             this.btn_close = new System.Windows.Forms.Button();
             this.chartUsage = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this.ShowChart = new System.Windows.Forms.Button();
+            this.btn_ShowChart = new System.Windows.Forms.Button();
             this.cmbYear = new System.Windows.Forms.ComboBox();
             this.cmbMonth = new System.Windows.Forms.ComboBox();
             this.btnSelectRoot = new System.Windows.Forms.Button();
@@ -45,7 +45,7 @@ namespace myEnergyUsage
             this.lblkWh = new System.Windows.Forms.Label();
             this.rdoHalfHour = new System.Windows.Forms.RadioButton();
             this.rdoDaily = new System.Windows.Forms.RadioButton();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.grpbx_graph_type = new System.Windows.Forms.GroupBox();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tab_charts = new System.Windows.Forms.TabPage();
             this.dtpEndTime = new System.Windows.Forms.DateTimePicker();
@@ -84,11 +84,11 @@ namespace myEnergyUsage
             this.cmbDataSource = new System.Windows.Forms.ComboBox();
             this.lbl_month = new System.Windows.Forms.Label();
             this.lbl_year = new System.Windows.Forms.Label();
-            this.label17 = new System.Windows.Forms.Label();
-            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.lbl_meter = new System.Windows.Forms.Label();
+            this.grpbx_totals = new System.Windows.Forms.GroupBox();
             this.label18 = new System.Windows.Forms.Label();
             this.label19 = new System.Windows.Forms.Label();
-            this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.grpbx_time_selection = new System.Windows.Forms.GroupBox();
             this.button1 = new System.Windows.Forms.Button();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
@@ -114,13 +114,19 @@ namespace myEnergyUsage
             this.panel14 = new System.Windows.Forms.Panel();
             this.panel15 = new System.Windows.Forms.Panel();
             this.panel16 = new System.Windows.Forms.Panel();
+            this.tableLayoutPanel9 = new System.Windows.Forms.TableLayoutPanel();
+            this.btn_help = new System.Windows.Forms.Button();
+            this.tableLayoutPanel10 = new System.Windows.Forms.TableLayoutPanel();
+            this.button2 = new System.Windows.Forms.Button();
+            this.tableLayoutPanel11 = new System.Windows.Forms.TableLayoutPanel();
+            this.btn_save_chart_image = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.chartUsage)).BeginInit();
-            this.groupBox1.SuspendLayout();
+            this.grpbx_graph_type.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tab_charts.SuspendLayout();
             this.tab_costs.SuspendLayout();
-            this.groupBox2.SuspendLayout();
-            this.groupBox3.SuspendLayout();
+            this.grpbx_totals.SuspendLayout();
+            this.grpbx_time_selection.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -145,14 +151,17 @@ namespace myEnergyUsage
             this.panel14.SuspendLayout();
             this.panel15.SuspendLayout();
             this.panel16.SuspendLayout();
+            this.tableLayoutPanel9.SuspendLayout();
+            this.tableLayoutPanel10.SuspendLayout();
+            this.tableLayoutPanel11.SuspendLayout();
             this.SuspendLayout();
             // 
             // btn_close
             // 
             this.btn_close.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.btn_close.Location = new System.Drawing.Point(1220, 3);
+            this.btn_close.Location = new System.Drawing.Point(3, 64);
             this.btn_close.Name = "btn_close";
-            this.btn_close.Size = new System.Drawing.Size(144, 118);
+            this.btn_close.Size = new System.Drawing.Size(138, 51);
             this.btn_close.TabIndex = 0;
             this.btn_close.Text = "Close";
             this.btn_close.UseVisualStyleBackColor = true;
@@ -175,16 +184,16 @@ namespace myEnergyUsage
             this.chartUsage.TabIndex = 1;
             this.chartUsage.Text = "chart1";
             // 
-            // ShowChart
+            // btn_ShowChart
             // 
-            this.ShowChart.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.ShowChart.Location = new System.Drawing.Point(1065, 3);
-            this.ShowChart.Name = "ShowChart";
-            this.ShowChart.Size = new System.Drawing.Size(144, 118);
-            this.ShowChart.TabIndex = 2;
-            this.ShowChart.Text = "Show Chart";
-            this.ShowChart.UseVisualStyleBackColor = true;
-            this.ShowChart.Click += new System.EventHandler(this.btnShowChart_Click);
+            this.btn_ShowChart.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.btn_ShowChart.Location = new System.Drawing.Point(3, 3);
+            this.btn_ShowChart.Name = "btn_ShowChart";
+            this.btn_ShowChart.Size = new System.Drawing.Size(138, 50);
+            this.btn_ShowChart.TabIndex = 2;
+            this.btn_ShowChart.Text = "Show Chart";
+            this.btn_ShowChart.UseVisualStyleBackColor = true;
+            this.btn_ShowChart.Click += new System.EventHandler(this.btnShowChart_Click);
             // 
             // cmbYear
             // 
@@ -207,11 +216,12 @@ namespace myEnergyUsage
             // btnSelectRoot
             // 
             this.btnSelectRoot.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.btnSelectRoot.Location = new System.Drawing.Point(910, 3);
+            this.btnSelectRoot.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnSelectRoot.Location = new System.Drawing.Point(3, 3);
             this.btnSelectRoot.Name = "btnSelectRoot";
-            this.btnSelectRoot.Size = new System.Drawing.Size(144, 118);
+            this.btnSelectRoot.Size = new System.Drawing.Size(138, 50);
             this.btnSelectRoot.TabIndex = 5;
-            this.btnSelectRoot.Text = "Select Data Root";
+            this.btnSelectRoot.Text = "Select Data";
             this.btnSelectRoot.UseVisualStyleBackColor = true;
             this.btnSelectRoot.Click += new System.EventHandler(this.btnSelectRoot_Click);
             // 
@@ -258,17 +268,17 @@ namespace myEnergyUsage
             this.rdoDaily.UseVisualStyleBackColor = true;
             this.rdoDaily.CheckedChanged += new System.EventHandler(this.rdoDaily_CheckedChanged);
             // 
-            // groupBox1
+            // grpbx_graph_type
             // 
-            this.groupBox1.Controls.Add(this.rdoDaily);
-            this.groupBox1.Controls.Add(this.rdoHalfHour);
-            this.groupBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.groupBox1.Location = new System.Drawing.Point(0, 0);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(304, 69);
-            this.groupBox1.TabIndex = 10;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Graph Type";
+            this.grpbx_graph_type.Controls.Add(this.rdoDaily);
+            this.grpbx_graph_type.Controls.Add(this.rdoHalfHour);
+            this.grpbx_graph_type.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.grpbx_graph_type.Location = new System.Drawing.Point(0, 0);
+            this.grpbx_graph_type.Name = "grpbx_graph_type";
+            this.grpbx_graph_type.Size = new System.Drawing.Size(304, 69);
+            this.grpbx_graph_type.TabIndex = 10;
+            this.grpbx_graph_type.TabStop = false;
+            this.grpbx_graph_type.Text = "Graph Type";
             // 
             // tabControl1
             // 
@@ -613,28 +623,28 @@ namespace myEnergyUsage
             this.lbl_year.TabIndex = 18;
             this.lbl_year.Text = "Year";
             // 
-            // label17
+            // lbl_meter
             // 
-            this.label17.AutoSize = true;
-            this.label17.Location = new System.Drawing.Point(28, 16);
-            this.label17.Name = "label17";
-            this.label17.Size = new System.Drawing.Size(50, 20);
-            this.label17.TabIndex = 19;
-            this.label17.Text = "Meter";
+            this.lbl_meter.AutoSize = true;
+            this.lbl_meter.Location = new System.Drawing.Point(28, 16);
+            this.lbl_meter.Name = "lbl_meter";
+            this.lbl_meter.Size = new System.Drawing.Size(50, 20);
+            this.lbl_meter.TabIndex = 19;
+            this.lbl_meter.Text = "Meter";
             // 
-            // groupBox2
+            // grpbx_totals
             // 
-            this.groupBox2.Controls.Add(this.label19);
-            this.groupBox2.Controls.Add(this.label18);
-            this.groupBox2.Controls.Add(this.lblCost);
-            this.groupBox2.Controls.Add(this.lblkWh);
-            this.groupBox2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.groupBox2.Location = new System.Drawing.Point(0, 0);
-            this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(440, 118);
-            this.groupBox2.TabIndex = 20;
-            this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "Totals";
+            this.grpbx_totals.Controls.Add(this.label19);
+            this.grpbx_totals.Controls.Add(this.label18);
+            this.grpbx_totals.Controls.Add(this.lblCost);
+            this.grpbx_totals.Controls.Add(this.lblkWh);
+            this.grpbx_totals.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.grpbx_totals.Location = new System.Drawing.Point(0, 0);
+            this.grpbx_totals.Name = "grpbx_totals";
+            this.grpbx_totals.Size = new System.Drawing.Size(440, 118);
+            this.grpbx_totals.TabIndex = 20;
+            this.grpbx_totals.TabStop = false;
+            this.grpbx_totals.Text = "Totals";
             // 
             // label18
             // 
@@ -654,19 +664,19 @@ namespace myEnergyUsage
             this.label19.TabIndex = 9;
             this.label19.Text = "Energy Used: ";
             // 
-            // groupBox3
+            // grpbx_time_selection
             // 
-            this.groupBox3.Controls.Add(this.dtpEndTime);
-            this.groupBox3.Controls.Add(this.label16);
-            this.groupBox3.Controls.Add(this.label15);
-            this.groupBox3.Controls.Add(this.dtpStartTime);
-            this.groupBox3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.groupBox3.Location = new System.Drawing.Point(0, 0);
-            this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(440, 118);
-            this.groupBox3.TabIndex = 21;
-            this.groupBox3.TabStop = false;
-            this.groupBox3.Text = "Time Selection";
+            this.grpbx_time_selection.Controls.Add(this.dtpEndTime);
+            this.grpbx_time_selection.Controls.Add(this.label16);
+            this.grpbx_time_selection.Controls.Add(this.label15);
+            this.grpbx_time_selection.Controls.Add(this.dtpStartTime);
+            this.grpbx_time_selection.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.grpbx_time_selection.Location = new System.Drawing.Point(0, 0);
+            this.grpbx_time_selection.Name = "grpbx_time_selection";
+            this.grpbx_time_selection.Size = new System.Drawing.Size(440, 118);
+            this.grpbx_time_selection.TabIndex = 21;
+            this.grpbx_time_selection.TabStop = false;
+            this.grpbx_time_selection.Text = "Time Selection";
             // 
             // button1
             // 
@@ -734,9 +744,9 @@ namespace myEnergyUsage
             this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 5F));
             this.tableLayoutPanel3.Controls.Add(this.panel2, 1, 0);
             this.tableLayoutPanel3.Controls.Add(this.panel3, 3, 0);
-            this.tableLayoutPanel3.Controls.Add(this.btnSelectRoot, 5, 0);
-            this.tableLayoutPanel3.Controls.Add(this.ShowChart, 7, 0);
-            this.tableLayoutPanel3.Controls.Add(this.btn_close, 9, 0);
+            this.tableLayoutPanel3.Controls.Add(this.tableLayoutPanel9, 9, 0);
+            this.tableLayoutPanel3.Controls.Add(this.tableLayoutPanel10, 7, 0);
+            this.tableLayoutPanel3.Controls.Add(this.tableLayoutPanel11, 5, 0);
             this.tableLayoutPanel3.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel3.Location = new System.Drawing.Point(3, 469);
             this.tableLayoutPanel3.Name = "tableLayoutPanel3";
@@ -747,7 +757,7 @@ namespace myEnergyUsage
             // 
             // panel2
             // 
-            this.panel2.Controls.Add(this.groupBox3);
+            this.panel2.Controls.Add(this.grpbx_time_selection);
             this.panel2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel2.Location = new System.Drawing.Point(8, 3);
             this.panel2.Name = "panel2";
@@ -756,7 +766,7 @@ namespace myEnergyUsage
             // 
             // panel3
             // 
-            this.panel3.Controls.Add(this.groupBox2);
+            this.panel3.Controls.Add(this.grpbx_totals);
             this.panel3.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel3.Location = new System.Drawing.Point(459, 3);
             this.panel3.Name = "panel3";
@@ -821,7 +831,7 @@ namespace myEnergyUsage
             // 
             // panel7
             // 
-            this.panel7.Controls.Add(this.groupBox1);
+            this.panel7.Controls.Add(this.grpbx_graph_type);
             this.panel7.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel7.Location = new System.Drawing.Point(3, 128);
             this.panel7.Name = "panel7";
@@ -831,7 +841,7 @@ namespace myEnergyUsage
             // panel8
             // 
             this.panel8.Controls.Add(this.cmbDataSource);
-            this.panel8.Controls.Add(this.label17);
+            this.panel8.Controls.Add(this.lbl_meter);
             this.panel8.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel8.Location = new System.Drawing.Point(3, 208);
             this.panel8.Name = "panel8";
@@ -1017,6 +1027,87 @@ namespace myEnergyUsage
             this.panel16.Size = new System.Drawing.Size(588, 54);
             this.panel16.TabIndex = 7;
             // 
+            // tableLayoutPanel9
+            // 
+            this.tableLayoutPanel9.ColumnCount = 1;
+            this.tableLayoutPanel9.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel9.Controls.Add(this.btn_help, 0, 0);
+            this.tableLayoutPanel9.Controls.Add(this.btn_close, 0, 2);
+            this.tableLayoutPanel9.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel9.Location = new System.Drawing.Point(1220, 3);
+            this.tableLayoutPanel9.Name = "tableLayoutPanel9";
+            this.tableLayoutPanel9.RowCount = 3;
+            this.tableLayoutPanel9.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel9.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 5F));
+            this.tableLayoutPanel9.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel9.Size = new System.Drawing.Size(144, 118);
+            this.tableLayoutPanel9.TabIndex = 6;
+            // 
+            // btn_help
+            // 
+            this.btn_help.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.btn_help.Location = new System.Drawing.Point(3, 3);
+            this.btn_help.Name = "btn_help";
+            this.btn_help.Size = new System.Drawing.Size(138, 50);
+            this.btn_help.TabIndex = 1;
+            this.btn_help.Text = "Help";
+            this.btn_help.UseVisualStyleBackColor = true;
+            this.btn_help.Click += new System.EventHandler(this.btn_help_Click);
+            // 
+            // tableLayoutPanel10
+            // 
+            this.tableLayoutPanel10.ColumnCount = 1;
+            this.tableLayoutPanel10.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel10.Controls.Add(this.button2, 0, 1);
+            this.tableLayoutPanel10.Controls.Add(this.btn_ShowChart, 0, 0);
+            this.tableLayoutPanel10.Controls.Add(this.btn_save_chart_image, 0, 2);
+            this.tableLayoutPanel10.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel10.Location = new System.Drawing.Point(1065, 3);
+            this.tableLayoutPanel10.Name = "tableLayoutPanel10";
+            this.tableLayoutPanel10.RowCount = 3;
+            this.tableLayoutPanel10.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel10.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 5F));
+            this.tableLayoutPanel10.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel10.Size = new System.Drawing.Size(144, 118);
+            this.tableLayoutPanel10.TabIndex = 7;
+            // 
+            // button2
+            // 
+            this.button2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.button2.Location = new System.Drawing.Point(3, 59);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(138, 1);
+            this.button2.TabIndex = 3;
+            this.button2.Text = "Show Chart";
+            this.button2.UseVisualStyleBackColor = true;
+            // 
+            // tableLayoutPanel11
+            // 
+            this.tableLayoutPanel11.ColumnCount = 1;
+            this.tableLayoutPanel11.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel11.Controls.Add(this.btnSelectRoot, 0, 0);
+            this.tableLayoutPanel11.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel11.Location = new System.Drawing.Point(910, 3);
+            this.tableLayoutPanel11.Name = "tableLayoutPanel11";
+            this.tableLayoutPanel11.RowCount = 3;
+            this.tableLayoutPanel11.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel11.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 5F));
+            this.tableLayoutPanel11.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel11.Size = new System.Drawing.Size(144, 118);
+            this.tableLayoutPanel11.TabIndex = 8;
+            // 
+            // btn_save_chart_image
+            // 
+            this.btn_save_chart_image.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.btn_save_chart_image.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btn_save_chart_image.Location = new System.Drawing.Point(3, 64);
+            this.btn_save_chart_image.Name = "btn_save_chart_image";
+            this.btn_save_chart_image.Size = new System.Drawing.Size(138, 51);
+            this.btn_save_chart_image.TabIndex = 4;
+            this.btn_save_chart_image.Text = "Save Chart";
+            this.btn_save_chart_image.UseVisualStyleBackColor = true;
+            this.btn_save_chart_image.Click += new System.EventHandler(this.btn_save_chart_image_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
@@ -1029,15 +1120,15 @@ namespace myEnergyUsage
             this.Text = "myEnergyUsage";
             this.Load += new System.EventHandler(this.MainForm_Load);
             ((System.ComponentModel.ISupportInitialize)(this.chartUsage)).EndInit();
-            this.groupBox1.ResumeLayout(false);
-            this.groupBox1.PerformLayout();
+            this.grpbx_graph_type.ResumeLayout(false);
+            this.grpbx_graph_type.PerformLayout();
             this.tabControl1.ResumeLayout(false);
             this.tab_charts.ResumeLayout(false);
             this.tab_costs.ResumeLayout(false);
-            this.groupBox2.ResumeLayout(false);
-            this.groupBox2.PerformLayout();
-            this.groupBox3.ResumeLayout(false);
-            this.groupBox3.PerformLayout();
+            this.grpbx_totals.ResumeLayout(false);
+            this.grpbx_totals.PerformLayout();
+            this.grpbx_time_selection.ResumeLayout(false);
+            this.grpbx_time_selection.PerformLayout();
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel2.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
@@ -1073,6 +1164,9 @@ namespace myEnergyUsage
             this.panel15.PerformLayout();
             this.panel16.ResumeLayout(false);
             this.panel16.PerformLayout();
+            this.tableLayoutPanel9.ResumeLayout(false);
+            this.tableLayoutPanel10.ResumeLayout(false);
+            this.tableLayoutPanel11.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -1082,7 +1176,7 @@ namespace myEnergyUsage
         private System.Windows.Forms.Button btn_close;
         private System.Windows.Forms.DataVisualization.Charting.Chart chartUsage;
         private System.Windows.Forms.ToolTip toolTip1;
-        private System.Windows.Forms.Button ShowChart;
+        private System.Windows.Forms.Button btn_ShowChart;
         private System.Windows.Forms.ComboBox cmbYear;
         private System.Windows.Forms.ComboBox cmbMonth;
         private System.Windows.Forms.Button btnSelectRoot;
@@ -1090,7 +1184,7 @@ namespace myEnergyUsage
         private System.Windows.Forms.Label lblkWh;
         private System.Windows.Forms.RadioButton rdoHalfHour;
         private System.Windows.Forms.RadioButton rdoDaily;
-        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.GroupBox grpbx_graph_type;
         private System.Windows.Forms.TabControl tabControl1;
         private System.Windows.Forms.TabPage tab_charts;
         private System.Windows.Forms.TabPage tab_costs;
@@ -1127,11 +1221,11 @@ namespace myEnergyUsage
         private System.Windows.Forms.DateTimePicker dtpStartTime;
         private System.Windows.Forms.CheckedListBox clbDays;
         private System.Windows.Forms.ComboBox cmbDataSource;
-        private System.Windows.Forms.GroupBox groupBox3;
-        private System.Windows.Forms.GroupBox groupBox2;
+        private System.Windows.Forms.GroupBox grpbx_time_selection;
+        private System.Windows.Forms.GroupBox grpbx_totals;
         private System.Windows.Forms.Label label19;
         private System.Windows.Forms.Label label18;
-        private System.Windows.Forms.Label label17;
+        private System.Windows.Forms.Label lbl_meter;
         private System.Windows.Forms.Label lbl_year;
         private System.Windows.Forms.Label lbl_month;
         private System.Windows.Forms.Button button1;
@@ -1159,6 +1253,12 @@ namespace myEnergyUsage
         private System.Windows.Forms.Panel panel14;
         private System.Windows.Forms.Panel panel15;
         private System.Windows.Forms.Panel panel16;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel9;
+        private System.Windows.Forms.Button btn_help;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel10;
+        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Button btn_save_chart_image;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel11;
     }
 }
 

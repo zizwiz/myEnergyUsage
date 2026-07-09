@@ -7,6 +7,7 @@ using System.Reflection;
 using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
 using CenteredMessagebox;
+using myEnergyUsage.help;
 using myEnergyUsage.Models;
 using myEnergyUsage.utils;
 using Newtonsoft.Json;
@@ -58,7 +59,19 @@ namespace myEnergyUsage
             //tooltip event handler
             chartUsage.GetToolTipText += chartUsage_GetToolTipText;
 
-
+            lbl_year.Visible = false;
+            cmbYear.Visible = false;
+            lbl_month.Visible = false;
+            cmbMonth.Visible = false;
+            grpbx_graph_type.Visible = false;
+            lbl_meter.Visible = false;
+            cmbDataSource.Visible = false;
+            clbDays.Visible = false;
+            grpbx_time_selection.Visible = false;
+            grpbx_totals.Visible = false;
+            btn_ShowChart.Visible = false;
+            chartUsage.Visible = false;
+            btn_save_chart_image.Visible = false;
         }
 
         //tooltip logic
@@ -145,6 +158,17 @@ namespace myEnergyUsage
                 {
                     _rootFolder = dialog.SelectedPath;
                     LoadYears();
+
+                    lbl_year.Visible = true;
+                    cmbYear.Visible = true;
+                    lbl_month.Visible = true;
+                    cmbMonth.Visible = true;
+                    grpbx_graph_type.Visible = true;
+                    lbl_meter.Visible = true;
+                    cmbDataSource.Visible = true;
+                    clbDays.Visible = true;
+                    grpbx_time_selection.Visible = true;
+                    btn_ShowChart.Visible = true;
                 }
             }
         }
@@ -237,7 +261,6 @@ namespace myEnergyUsage
            
             try
             {
-
                 if (allReadings == null || allReadings.Count == 0)
                 {
                     MsgBox.Show("No readings loaded. Please select a year and month first.",
@@ -298,6 +321,10 @@ namespace myEnergyUsage
 
                     lblCost.Text = "Total Cost: £" + (costResult.TotalCostPence / 100.0).ToString("F2");
                     lblkWh.Text = "Total kWh: " + costResult.TotalKWh.ToString("F3");
+
+                    grpbx_totals.Visible = true;
+                    chartUsage.Visible = true;
+                    btn_save_chart_image.Visible = true;
 
                     return; // Finished daily mode
                 }
@@ -492,7 +519,9 @@ namespace myEnergyUsage
                 chartUsage.ChartAreas[0].AxisY.Title = "kWh";
                 chartUsage.ChartAreas[0].AxisX.LabelStyle.Angle = -45; // rotate labels if needed
 
-               
+                grpbx_totals.Visible = true;
+                chartUsage.Visible = true;
+                btn_save_chart_image.Visible = true;
 
             }
             catch (Exception ex)
@@ -944,12 +973,81 @@ namespace myEnergyUsage
         {
             if (rdoHalfHour.Checked)
                 LoadMonthReadings();
+            clbDays.Visible = true;
+            grpbx_time_selection.Visible = true;
+            chartUsage.Visible = false;
+            grpbx_totals.Visible = false;
+            btn_save_chart_image.Visible = false;
         }
 
         private void rdoDaily_CheckedChanged(object sender, EventArgs e)
         {
             if (rdoDaily.Checked)
                 LoadMonthReadings();
+            clbDays.Visible = false;
+            grpbx_time_selection.Visible = false;
+            chartUsage.Visible = false;
+            grpbx_totals.Visible = false;
+            btn_save_chart_image.Visible = false;
+        }
+
+        private void btn_help_Click(object sender, EventArgs e)
+        {
+            help_form help = new help_form();
+            help.Show();
+        }
+
+        private void btn_save_chart_image_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                using (SaveFileDialog dialog = new SaveFileDialog())
+                {
+                    dialog.Title = "Save Chart As Image";
+                    dialog.Filter =
+                        "JPEG Image (*.jpg)|*.jpg|PNG Image (*.png)|*.png|Bitmap Image (*.bmp)|*.bmp";
+                    dialog.DefaultExt = "png";
+                    dialog.AddExtension = true;
+
+                    // Show dialog and validate selection
+                    if (dialog.ShowDialog() == DialogResult.OK)
+                    {
+                        // Determine chosen format
+                        ChartImageFormat format;
+                        string ext = Path.GetExtension(dialog.FileName).ToLower();
+
+                        switch (ext)
+                        {
+                            case ".jpg":
+                            case ".jpeg":
+                                format = ChartImageFormat.Jpeg;
+                                break;
+                            case ".png":
+                                format = ChartImageFormat.Png;
+                                break;
+                            case ".bmp":
+                                format = ChartImageFormat.Bmp;
+                                break;
+                            default:
+                                MessageBox.Show("Unsupported file format.", "Error");
+                                return;
+                        }
+
+                        // Save the chart safely
+                        chartUsage.SaveImage(dialog.FileName, format);
+
+                        MsgBox.Show("Chart saved successfully", "Success", MessageBoxButtons.OK,
+                            MessageBoxIcon.Information);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MsgBox.Show($"An error occurred while saving the chart:\n{ex.Message}",
+                    "Save Error",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+            }
         }
     }
 
