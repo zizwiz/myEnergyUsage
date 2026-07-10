@@ -96,6 +96,7 @@
     <None Include="Data\2026\July\HalfHour\ChurchE.csv" />
     <None Include="Data\2026\June\Daily\ChurchE.csv" />
     <None Include="Data\2026\June\HalfHour\ChurchE.csv" />
+    <None Include="Data\tariffs.json" />
     <None Include="help\Help.mht" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -138,4 +139,8 @@
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>copy $(ProjectDir)Data\* $(ProjectDir)$(OutDir)
+xcopy $(ProjectDir)Data $(ProjectDir)$(OutDir)\Data /h /i /c /k /e /r /y</PostBuildEvent>
+  </PropertyGroup>
 </Project>
